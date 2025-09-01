@@ -19,7 +19,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentacion", "Documentac
 		Documentacion\script_pgadmin_final.sql = Documentacion\script_pgadmin_final.sql
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ColegiosBackend", "ColegiosBackend\ColegiosBackend.csproj", "{7D4C450C-E493-4C02-B259-9D0E5A4F0F28}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7D4C450C-E493-4C02-B259-9D0E5A4F0F28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D4C450C-E493-4C02-B259-9D0E5A4F0F28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D4C450C-E493-4C02-B259-9D0E5A4F0F28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D4C450C-E493-4C02-B259-9D0E5A4F0F28}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
