@@ -1,0 +1,359 @@
+// ===============================================
+// TABLA: logs_auditoria - COLUMNAS: datos_anteriores/datos_nuevos
+// ===============================================
+
+// EJEMPLO 1: Cambio en tabla estudiantes
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "persona_id": "550e8400-e29b-41d4-a716-446655440001", 
+  "codigo_estudiante": "EST-2024-001",
+  "activo": true,
+  "fecha_creacion": "2024-01-15T10:30:00Z",
+  "fecha_actualizacion": "2024-01-20T14:45:00Z"
+}
+
+// EJEMPLO 2: Cambio en tabla calificaciones
+{
+  "id": "550e8400-e29b-41d4-a716-446655440002",
+  "estudiante_id": "550e8400-e29b-41d4-a716-446655440000",
+  "asignacion_id": "550e8400-e29b-41d4-a716-446655440003",
+  "periodo_academico_id": "550e8400-e29b-41d4-a716-446655440004",
+  "tipo_evaluacion_id": "550e8400-e29b-41d4-a716-446655440005",
+  "calificacion": 4.5,
+  "observaciones": "Excelente desempeño en el examen",
+  "fecha_calificacion": "2024-03-15",
+  "profesor_id": "550e8400-e29b-41d4-a716-446655440006",
+  "colegio_id": "550e8400-e29b-41d4-a716-446655440007"
+}
+
+// EJEMPLO 3: Cambio en tabla usuarios
+{
+  "id": "550e8400-e29b-41d4-a716-446655440008",
+  "username": "profesor.matematicas",
+  "email": "profesor@colegio.edu.co",
+  "activo": true,
+  "requiere_cambio_password": false,
+  "ultimo_acceso": "2024-08-20T15:30:00Z",
+  "intentos_fallidos": 0,
+  "bloqueado_hasta": null,
+  "fecha_creacion": "2024-01-10T08:00:00Z",
+  "fecha_actualizacion": "2024-08-20T15:30:00Z"
+}
+
+// EJEMPLO 4: Cambio en tabla facturas
+{
+  "id": "550e8400-e29b-41d4-a716-446655440009",
+  "numero_factura": "FC-2024-00123",
+  "acudiente_id": "550e8400-e29b-41d4-a716-44665544000a",
+  "colegio_id": "550e8400-e29b-41d4-a716-446655440007",
+  "fecha_factura": "2024-08-01",
+  "fecha_vencimiento": "2024-08-31",
+  "subtotal": 850000.00,
+  "descuentos": 85000.00,
+  "total": 765000.00,
+  "estado": "PENDIENTE",
+  "observaciones": "Descuento por segundo hermano aplicado",
+  "fecha_creacion": "2024-08-01T09:00:00Z"
+}
+
+// EJEMPLO 5: Cambio en tabla matriculas
+{
+  "id": "550e8400-e29b-41d4-a716-44665544000b",
+  "estudiante_id": "550e8400-e29b-41d4-a716-446655440000",
+  "colegio_id": "550e8400-e29b-41d4-a716-446655440007",
+  "ano_academico_id": "550e8400-e29b-41d4-a716-44665544000c",
+  "grupo_id": "550e8400-e29b-41d4-a716-44665544000d",
+  "fecha_matricula": "2024-01-20",
+  "estado": "ACTIVA",
+  "observaciones": "Matrícula regular - sin novedades"
+}
+
+// EJEMPLO 6: Cambio en tabla asistencia
+{
+  "id": "550e8400-e29b-41d4-a716-44665544000e",
+  "estudiante_id": "550e8400-e29b-41d4-a716-446655440000",
+  "grupo_id": "550e8400-e29b-41d4-a716-44665544000d",
+  "fecha": "2024-08-21",
+  "estado": "PRESENTE",
+  "observaciones": null,
+  "registrado_por": "550e8400-e29b-41d4-a716-446655440008",
+  "colegio_id": "550e8400-e29b-41d4-a716-446655440007",
+  "fecha_registro": "2024-08-21T07:15:00Z"
+}
+
+// ===============================================
+// MODELOS C# PARA ANÁLISIS DE AUDITORÍA
+// ===============================================
+
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
+public class RegistroAuditoria
+{
+    public Guid Id { get; set; }
+    public Guid? ColegioId { get; set; }
+    public Guid? UsuarioId { get; set; }
+    public string Tabla { get; set; } = string.Empty;
+    public Guid? RegistroId { get; set; }
+    public string Accion { get; set; } = string.Empty; // INSERT, UPDATE, DELETE
+    public JsonElement? DatosAnteriores { get; set; }
+    public JsonElement? DatosNuevos { get; set; }
+    public string? IpAddress { get; set; }
+    public string? UserAgent { get; set; }
+    public DateTime FechaAccion { get; set; }
+}
+
+public class CambioAuditoria
+{
+    public string Campo { get; set; } = string.Empty;
+    public object? ValorAnterior { get; set; }
+    public object? ValorNuevo { get; set; }
+    public string TipoCambio { get; set; } = string.Empty; // CREADO, MODIFICADO, ELIMINADO
+}
+
+public class ResumenAuditoria
+{
+    public string Tabla { get; set; } = string.Empty;
+    public Guid RegistroId { get; set; }
+    public string Accion { get; set; } = string.Empty;
+    public DateTime Fecha { get; set; }
+    public string? Usuario { get; set; }
+    public List<CambioAuditoria> Cambios { get; set; } = new();
+    public string? IpAddress { get; set; }
+}
+
+// ===============================================
+// SERVICIO PARA ANÁLISIS DE AUDITORÍA
+// ===============================================
+
+public interface IAuditoriaService
+{
+    Task<List<ResumenAuditoria>> ObtenerHistorialCambios(Guid registroId, string tabla);
+    Task<List<CambioAuditoria>> CompararCambios(JsonElement? datosAnteriores, JsonElement? datosNuevos);
+    Task<List<RegistroAuditoria>> ObtenerActividadUsuario(Guid usuarioId, DateTime desde, DateTime hasta);
+    Task<List<RegistroAuditoria>> ObtenerCambiosTabla(string tabla, DateTime desde, DateTime hasta);
+    Task<bool> TieneCambiosSospechosos(Guid usuarioId, TimeSpan ventanaTiempo);
+}
+
+public class AuditoriaService : IAuditoriaService
+{
+    private readonly ApplicationDbContext _context;
+    private readonly ILogger<AuditoriaService> _logger;
+
+    public AuditoriaService(ApplicationDbContext context, ILogger<AuditoriaService> logger)
+    {
+        _context = context;
+        _logger = logger;
+    }
+
+    public async Task<List<ResumenAuditoria>> ObtenerHistorialCambios(Guid registroId, string tabla)
+    {
+        var logs = await _context.LogsAuditoria
+            .Where(l => l.RegistroId == registroId && l.Tabla == tabla)
+            .OrderBy(l => l.FechaAccion)
+            .ToListAsync();
+
+        var resultado = new List<ResumenAuditoria>();
+
+        foreach (var log in logs)
+        {
+            var cambios = await CompararCambios(log.DatosAnteriores, log.DatosNuevos);
+            
+            resultado.Add(new ResumenAuditoria
+            {
+                Tabla = log.Tabla,
+                RegistroId = log.RegistroId ?? Guid.Empty,
+                Accion = log.Accion,
+                Fecha = log.FechaAccion,
+                Usuario = await ObtenerNombreUsuario(log.UsuarioId),
+                Cambios = cambios,
+                IpAddress = log.IpAddress
+            });
+        }
+
+        return resultado;
+    }
+
+    public async Task<List<CambioAuditoria>> CompararCambios(JsonElement? datosAnteriores, JsonElement? datosNuevos)
+    {
+        var cambios = new List<CambioAuditoria>();
+
+        try
+        {
+            // Si es inserción (solo datos nuevos)
+            if (datosAnteriores == null && datosNuevos != null)
+            {
+                foreach (var propiedad in datosNuevos.Value.EnumerateObject())
+                {
+                    cambios.Add(new CambioAuditoria
+                    {
+                        Campo = propiedad.Name,
+                        ValorAnterior = null,
+                        ValorNuevo = ObtenerValor(propiedad.Value),
+                        TipoCambio = "CREADO"
+                    });
+                }
+            }
+            // Si es eliminación (solo datos anteriores)
+            else if (datosAnteriores != null && datosNuevos == null)
+            {
+                foreach (var propiedad in datosAnteriores.Value.EnumerateObject())
+                {
+                    cambios.Add(new CambioAuditoria
+                    {
+                        Campo = propiedad.Name,
+                        ValorAnterior = ObtenerValor(propiedad.Value),
+                        ValorNuevo = null,
+                        TipoCambio = "ELIMINADO"
+                    });
+                }
+            }
+            // Si es actualización (comparar ambos)
+            else if (datosAnteriores != null && datosNuevos != null)
+            {
+                var propiedadesAnteriores = datosAnteriores.Value.EnumerateObject().ToDictionary(p => p.Name, p => p.Value);
+                var propiedadesNuevas = datosNuevos.Value.EnumerateObject().ToDictionary(p => p.Name, p => p.Value);
+
+                // Verificar todas las propiedades
+                var todasLasPropiedades = propiedadesAnteriores.Keys.Union(propiedadesNuevas.Keys);
+
+                foreach (var nombrePropiedad in todasLasPropiedades)
+                {
+                    var valorAnterior = propiedadesAnteriores.ContainsKey(nombrePropiedad) 
+                        ? ObtenerValor(propiedadesAnteriores[nombrePropiedad]) 
+                        : null;
+                    
+                    var valorNuevo = propiedadesNuevas.ContainsKey(nombrePropiedad) 
+                        ? ObtenerValor(propiedadesNuevas[nombrePropiedad]) 
+                        : null;
+
+                    // Solo agregar si hay cambio
+                    if (!Equals(valorAnterior, valorNuevo))
+                    {
+                        cambios.Add(new CambioAuditoria
+                        {
+                            Campo = nombrePropiedad,
+                            ValorAnterior = valorAnterior,
+                            ValorNuevo = valorNuevo,
+                            TipoCambio = "MODIFICADO"
+                        });
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error comparando cambios en auditoría");
+        }
+
+        return cambios;
+    }
+
+    public async Task<List<RegistroAuditoria>> ObtenerActividadUsuario(Guid usuarioId, DateTime desde, DateTime hasta)
+    {
+        return await _context.LogsAuditoria
+            .Where(l => l.UsuarioId == usuarioId && 
+                       l.FechaAccion >= desde && 
+                       l.FechaAccion <= hasta)
+            .OrderByDescending(l => l.FechaAccion)
+            .ToListAsync();
+    }
+
+    public async Task<List<RegistroAuditoria>> ObtenerCambiosTabla(string tabla, DateTime desde, DateTime hasta)
+    {
+        return await _context.LogsAuditoria
+            .Where(l => l.Tabla == tabla && 
+                       l.FechaAccion >= desde && 
+                       l.FechaAccion <= hasta)
+            .OrderByDescending(l => l.FechaAccion)
+            .ToListAsync();
+    }
+
+    public async Task<bool> TieneCambiosSospechosos(Guid usuarioId, TimeSpan ventanaTiempo)
+    {
+        var fechaInicio = DateTime.UtcNow.Subtract(ventanaTiempo);
+        
+        var actividad = await _context.LogsAuditoria
+            .Where(l => l.UsuarioId == usuarioId && l.FechaAccion >= fechaInicio)
+            .GroupBy(l => new { l.Tabla, l.Accion })
+            .Select(g => new { g.Key.Tabla, g.Key.Accion, Cantidad = g.Count() })
+            .ToListAsync();
+
+        // Definir umbrales sospechosos
+        var umbralEliminaciones = 10; // Más de 10 eliminaciones
+        var umbralModificaciones = 50; // Más de 50 modificaciones
+        
+        return actividad.Any(a => 
+            (a.Accion == "DELETE" && a.Cantidad > umbralEliminaciones) ||
+            (a.Accion == "UPDATE" && a.Cantidad > umbralModificaciones));
+    }
+
+    private object? ObtenerValor(JsonElement elemento)
+    {
+        return elemento.ValueKind switch
+        {
+            JsonValueKind.String => elemento.GetString(),
+            JsonValueKind.Number => elemento.TryGetDecimal(out var dec) ? dec : elemento.GetDouble(),
+            JsonValueKind.True => true,
+            JsonValueKind.False => false,
+            JsonValueKind.Null => null,
+            _ => elemento.ToString()
+        };
+    }
+
+    private async Task<string?> ObtenerNombreUsuario(Guid? usuarioId)
+    {
+        if (usuarioId == null) return null;
+        
+        var usuario = await _context.Usuarios
+            .Where(u => u.Id == usuarioId)
+            .Select(u => u.Username)
+            .FirstOrDefaultAsync();
+            
+        return usuario;
+    }
+}
+
+// ===============================================
+// EXTENSIONES PARA ANÁLISIS
+// ===============================================
+
+public static class AuditoriaExtensions
+{
+    public static string ObtenerDescripcionCambio(this CambioAuditoria cambio)
+    {
+        return cambio.TipoCambio switch
+        {
+            "CREADO" => $"Campo '{cambio.Campo}' creado con valor '{cambio.ValorNuevo}'",
+            "ELIMINADO" => $"Campo '{cambio.Campo}' eliminado (valor anterior: '{cambio.ValorAnterior}')",
+            "MODIFICADO" => $"Campo '{cambio.Campo}' cambió de '{cambio.ValorAnterior}' a '{cambio.ValorNuevo}'",
+            _ => $"Campo '{cambio.Campo}' modificado"
+        };
+    }
+    
+    public static bool EsCambioSensible(this CambioAuditoria cambio)
+    {
+        var camposSensibles = new[] 
+        { 
+            "calificacion", "estado", "activo", "password_hash", 
+            "email", "total", "subtotal", "fecha_vencimiento" 
+        };
+        
+        return camposSensibles.Contains(cambio.Campo.ToLower());
+    }
+    
+    public static string GenerarResumenCambios(this List<CambioAuditoria> cambios)
+    {
+        if (!cambios.Any()) return "Sin cambios";
+        
+        var grupos = cambios.GroupBy(c => c.TipoCambio);
+        var resumen = new List<string>();
+        
+        foreach (var grupo in grupos)
+        {
+            resumen.Add($"{grupo.Count()} campo(s) {grupo.Key.ToLower()}(s)");
+        }
+        
+        return string.Join(", ", resumen);
+    }
+}

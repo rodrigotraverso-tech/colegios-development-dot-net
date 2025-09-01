@@ -1,0 +1,296 @@
+{
+  "calendario_academico": {
+    "inicio_clases": "2024-02-01",
+    "fin_clases": "2024-11-30",
+    "periodos": [
+      {
+        "numero": 1,
+        "nombre": "Primer Período",
+        "fecha_inicio": "2024-02-01",
+        "fecha_fin": "2024-04-30",
+        "peso_porcentual": 25
+      },
+      {
+        "numero": 2,
+        "nombre": "Segundo Período",
+        "fecha_inicio": "2024-05-01",
+        "fecha_fin": "2024-07-31",
+        "peso_porcentual": 25
+      },
+      {
+        "numero": 3,
+        "nombre": "Tercer Período",
+        "fecha_inicio": "2024-08-01",
+        "fecha_fin": "2024-09-30",
+        "peso_porcentual": 25
+      },
+      {
+        "numero": 4,
+        "nombre": "Cuarto Período",
+        "fecha_inicio": "2024-10-01",
+        "fecha_fin": "2024-11-30",
+        "peso_porcentual": 25
+      }
+    ],
+    "vacaciones": [
+      {
+        "nombre": "Semana Santa",
+        "fecha_inicio": "2024-03-25",
+        "fecha_fin": "2024-03-29"
+      },
+      {
+        "nombre": "Vacaciones de Mitad de Año",
+        "fecha_inicio": "2024-06-15",
+        "fecha_fin": "2024-07-15"
+      }
+    ]
+  },
+  
+  "sistema_calificacion": {
+    "escala_minima": 1.0,
+    "escala_maxima": 5.0,
+    "nota_minima_aprobacion": 3.0,
+    "decimales": 1,
+    "permite_recuperacion": true,
+    "nota_maxima_recuperacion": 3.5,
+    "escalas_cualitativas": {
+      "4.6-5.0": "Superior",
+      "4.0-4.5": "Alto",
+      "3.0-3.9": "Básico",
+      "1.0-2.9": "Bajo"
+    },
+    "tipos_evaluacion": [
+      {
+        "codigo": "QUIZ",
+        "nombre": "Quiz",
+        "porcentaje_maximo": 30
+      },
+      {
+        "codigo": "TALLER",
+        "nombre": "Taller",
+        "porcentaje_maximo": 25
+      },
+      {
+        "codigo": "EXAMEN",
+        "nombre": "Examen",
+        "porcentaje_maximo": 40
+      },
+      {
+        "codigo": "PARTICIPACION",
+        "nombre": "Participación",
+        "porcentaje_maximo": 15
+      }
+    ]
+  },
+
+  "horarios": {
+    "hora_inicio_jornada": "07:00",
+    "hora_fin_jornada": "15:00",
+    "duracion_clase_minutos": 45,
+    "duracion_descanso_minutos": 15,
+    "descansos": [
+      {
+        "nombre": "Primer Descanso",
+        "hora_inicio": "09:30",
+        "hora_fin": "09:45"
+      },
+      {
+        "nombre": "Almuerzo",
+        "hora_inicio": "12:00",
+        "hora_fin": "13:00"
+      }
+    ],
+    "jornadas": [
+      {
+        "codigo": "MANANA",
+        "nombre": "Jornada Mañana",
+        "hora_inicio": "07:00",
+        "hora_fin": "12:00"
+      },
+      {
+        "codigo": "TARDE",
+        "nombre": "Jornada Tarde",
+        "hora_inicio": "13:00",
+        "hora_fin": "18:00"
+      }
+    ]
+  },
+
+  "asistencia": {
+    "tolerancia_llegada_tarde_minutos": 15,
+    "requiere_justificacion_falta": true,
+    "dias_maximos_justificar": 3,
+    "porcentaje_minimo_asistencia": 85,
+    "notificar_falta_automaticamente": true,
+    "estados_permitidos": [
+      "PRESENTE",
+      "AUSENTE", 
+      "TARDE",
+      "EXCUSADO",
+      "PERMISO"
+    ]
+  },
+
+  "disciplina": {
+    "tipos_observaciones": [
+      {
+        "codigo": "POSITIVA",
+        "nombre": "Observación Positiva",
+        "color": "#28a745"
+      },
+      {
+        "codigo": "INFORMATIVA",
+        "nombre": "Observación Informativa", 
+        "color": "#17a2b8"
+      },
+      {
+        "codigo": "LLAMADO_ATENCION",
+        "nombre": "Llamado de Atención",
+        "color": "#ffc107"
+      },
+      {
+        "codigo": "FALTA_GRAVE",
+        "nombre": "Falta Grave",
+        "color": "#dc3545"
+      }
+    ],
+    "requiere_firma_acudiente": ["LLAMADO_ATENCION", "FALTA_GRAVE"],
+    "notificar_acudiente_automaticamente": true
+  },
+
+  "financiero": {
+    "moneda": "COP",
+    "formato_factura": "FC-{YEAR}-{NUMERO}",
+    "dias_vencimiento_factura": 30,
+    "permite_pago_parcial": true,
+    "descuento_hermanos": {
+      "activo": true,
+      "segundo_hermano": 10,
+      "tercer_hermano": 15,
+      "cuarto_hermano_en_adelante": 20
+    },
+    "intereses_mora": {
+      "activo": true,
+      "porcentaje_mensual": 2.5,
+      "dias_gracia": 5
+    },
+    "metodos_pago_permitidos": [
+      "EFECTIVO",
+      "TARJETA_CREDITO", 
+      "TARJETA_DEBITO",
+      "TRANSFERENCIA",
+      "PSE"
+    ]
+  },
+
+  "comunicaciones": {
+    "email_automatico": {
+      "notas_publicadas": true,
+      "faltas_estudiante": true,
+      "vencimiento_facturas": true,
+      "eventos_importantes": true
+    },
+    "sms_automatico": {
+      "emergencias": true,
+      "llegada_tarde": false,
+      "facturas_vencidas": true
+    },
+    "notificaciones_push": {
+      "todas_habilitadas": true,
+      "horario_silencio": {
+        "inicio": "22:00",
+        "fin": "06:00"
+      }
+    }
+  },
+
+  "academico": {
+    "permite_calificaciones_decimales": true,
+    "redondeo": "MATEMATICO", // MATEMATICO, HACIA_ARRIBA, HACIA_ABAJO
+    "muestra_puesto_estudiante": true,
+    "calcula_promedio_acumulado": true,
+    "requiere_observaciones_nota_baja": true,
+    "limite_nota_baja": 3.0,
+    "permite_edicion_notas": {
+      "activo": true,
+      "dias_limite": 7,
+      "requiere_autorizacion": true
+    }
+  },
+
+  "seguridad": {
+    "sesion_expira_minutos": 480,
+    "intentos_login_maximos": 3,
+    "bloqueo_cuenta_minutos": 30,
+    "requiere_cambio_password_dias": 90,
+    "longitud_minima_password": 8,
+    "requiere_caracteres_especiales": true,
+    "backup_automatico": {
+      "activo": true,
+      "frecuencia_horas": 24,
+      "retener_dias": 30
+    }
+  },
+
+  "personalizacion": {
+    "logo_principal": "/logos/colegio_principal.png",
+    "logo_reportes": "/logos/colegio_reportes.png",
+    "favicon": "/favicons/colegio.ico",
+    "colores": {
+      "primario": "#1565C0",
+      "secundario": "#FFA726", 
+      "acento": "#43A047",
+      "fondo": "#F5F5F5"
+    },
+    "fuentes": {
+      "principal": "Roboto",
+      "titulos": "Montserrat"
+    },
+    "mostrar_marca_agua": true,
+    "pie_pagina_reportes": "© 2024 Colegio XYZ - Sistema de Gestión Académica"
+  },
+
+  "modulos_activos": {
+    "gestion_estudiantes": true,
+    "gestion_profesores": true,
+    "calificaciones": true,
+    "asistencia": true,
+    "disciplina": true,
+    "financiero": true,
+    "reportes": true,
+    "comunicaciones": true,
+    "biblioteca": false,
+    "transporte": false,
+    "inventario": false,
+    "nomina": false
+  },
+
+  "integraciones": {
+    "ministerio_educacion": {
+      "activo": false,
+      "codigo_dane": "",
+      "reporte_automatico": false
+    },
+    "plataforma_pagos": {
+      "activo": false,
+      "proveedor": "",
+      "configuracion": {}
+    },
+    "sms_gateway": {
+      "activo": false,
+      "proveedor": "",
+      "configuracion": {}
+    }
+  },
+
+  "reportes": {
+    "formatos_disponibles": ["PDF", "EXCEL", "CSV"],
+    "incluir_logo": true,
+    "incluir_firma_digital": false,
+    "plantillas_personalizadas": {
+      "boletin": "plantilla_boletin_v1.html",
+      "certificado": "plantilla_certificado_v1.html",
+      "paz_y_salvo": "plantilla_paz_salvo_v1.html"
+    }
+  }
+}

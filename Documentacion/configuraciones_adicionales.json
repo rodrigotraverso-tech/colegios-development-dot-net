@@ -1,0 +1,569 @@
+// ===============================================
+// CONFIGURACIONES ADICIONALES - GRUPOS
+// Si agregas una columna configuracion a la tabla grupos
+// ===============================================
+
+// ESTRUCTURA JSON para grupos.configuracion
+{
+  "horario_clases": [
+    {
+      "dia": "LUNES",
+      "hora_inicio": "07:00",
+      "hora_fin": "07:45",
+      "materia_codigo": "MAT-001",
+      "salon": "A101",
+      "profesor_id": "550e8400-e29b-41d4-a716-446655440008"
+    },
+    {
+      "dia": "LUNES", 
+      "hora_inicio": "07:45",
+      "hora_fin": "08:30",
+      "materia_codigo": "ESP-001",
+      "salon": "A101",
+      "profesor_id": "550e8400-e29b-41d4-a716-446655440009"
+    },
+    {
+      "dia": "MARTES",
+      "hora_inicio": "07:00",
+      "hora_fin": "07:45",
+      "materia_codigo": "CIE-001",
+      "salon": "LAB-001",
+      "profesor_id": "550e8400-e29b-41d4-a716-44665544000a"
+    }
+  ],
+  "caracteristicas_especiales": {
+    "es_grupo_aceleracion": false,
+    "es_grupo_refuerzo": false,
+    "requiere_atencion_especial": false,
+    "modalidad": "PRESENCIAL",
+    "nivel_bilingue": false,
+    "enfoque_pedagogico": "TRADICIONAL"
+  },
+  "limites_disciplinarios": {
+    "maximo_observaciones_mes": 3,
+    "requiere_reunion_padres": 2,
+    "politicas_especiales": [
+      "No uso de celulares en clase",
+      "Uniforme completo obligatorio",
+      "Puntualidad estricta"
+    ]
+  },
+  "configuracion_evaluacion": {
+    "permite_trabajo_grupal": true,
+    "maximo_integrantes_grupo": 4,
+    "requiere_sustentacion_oral": false,
+    "permite_material_consulta": true
+  }
+}
+
+// ===============================================
+// CONFIGURACIONES ADICIONALES - MATERIAS
+// Si agregas una columna configuracion a la tabla materias
+// ===============================================
+
+// ESTRUCTURA JSON para materias.configuracion
+{
+  "tipo_materia": "TEORICA",
+  "requiere_laboratorio": false,
+  "intensidad_semanal": 4,
+  "permite_trabajo_casa": true,
+  "evaluacion_especial": {
+    "requiere_proyecto_final": true,
+    "peso_proyecto": 30,
+    "permite_examen_supletorio": true,
+    "nota_minima_supletorio": 2.0,
+    "permite_segunda_oportunidad": true
+  },
+  "recursos_necesarios": [
+    "COMPUTADOR",
+    "INTERNET", 
+    "SOFTWARE_ESPECIALIZADO",
+    "CALCULADORA"
+  ],
+  "prerrequisitos": [
+    "MAT-001",
+    "FIS-001"
+  ],
+  "competencias": [
+    "Resolución de problemas matemáticos",
+    "Pensamiento lógico",
+    "Análisis cuantitativo"
+  ],
+  "metodologia": {
+    "enfoque": "CONSTRUCTIVISTA",
+    "usa_tecnologia": true,
+    "requiere_participacion": true,
+    "permite_autoevaluacion": true
+  }
+}
+
+// ===============================================
+// CONFIGURACIONES DE NOTIFICACIONES
+// Para tipos_notificacion o notificaciones específicas
+// ===============================================
+
+// ESTRUCTURA JSON para configuracion de notificaciones
+{
+  "canales_habilitados": ["EMAIL", "SMS", "PUSH", "WHATSAPP"],
+  "prioridad": "ALTA",
+  "frecuencia_maxima": {
+    "por_dia": 5,
+    "por_semana": 20,
+    "por_mes": 50
+  },
+  "plantilla": {
+    "asunto": "Notificación Académica - {NOMBRE_ESTUDIANTE}",
+    "cuerpo": "Estimado(a) {NOMBRE_ACUDIENTE}, le informamos que su hijo(a) {NOMBRE_ESTUDIANTE} del grado {GRADO} {GRUPO} {MENSAJE_PERSONALIZADO}. Para más información, puede contactarnos al {TELEFONO_COLEGIO}.",
+    "pie_mensaje": "Atentamente, {NOMBRE_COLEGIO}",
+    "usar_firma_html": true,
+    "incluir_logo": true
+  },
+  "condiciones_envio": {
+    "horario_permitido": {
+      "hora_inicio": "07:00",
+      "hora_fin": "20:00"
+    },
+    "dias_permitidos": ["LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO"],
+    "excluir_vacaciones": true,
+    "requiere_confirmacion": false,
+    "validar_numero_telefono": true
+  },
+  "escalamiento": {
+    "reenviar_si_no_leida": true,
+    "tiempo_reenvio_horas": 24,
+    "maximo_reenvios": 2,
+    "notificar_director": true,
+    "cambiar_canal_escalamiento": true
+  },
+  "personalizacion": {
+    "variables_disponibles": [
+      "{NOMBRE_ESTUDIANTE}",
+      "{NOMBRE_ACUDIENTE}",
+      "{GRADO}",
+      "{GRUPO}",
+      "{NOMBRE_COLEGIO}",
+      "{TELEFONO_COLEGIO}",
+      "{FECHA_ACTUAL}",
+      "{MENSAJE_PERSONALIZADO}"
+    ],
+    "permite_html": true,
+    "longitud_maxima": 500
+  }
+}
+
+// ===============================================
+// MODELOS C# CORRESPONDIENTES
+// ===============================================
+
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
+
+// Configuración de Grupos
+public class ConfiguracionGrupo
+{
+    [JsonPropertyName("horario_clases")]
+    public List<HorarioClase> HorarioClases { get; set; } = new();
+    
+    [JsonPropertyName("caracteristicas_especiales")]
+    public CaracteristicasEspeciales CaracteristicasEspeciales { get; set; } = new();
+    
+    [JsonPropertyName("limites_disciplinarios")]
+    public LimitesDisciplinarios LimitesDisciplinarios { get; set; } = new();
+    
+    [JsonPropertyName("configuracion_evaluacion")]
+    public ConfiguracionEvaluacionGrupo ConfiguracionEvaluacion { get; set; } = new();
+}
+
+public class HorarioClase
+{
+    [Required]
+    public string Dia { get; set; } = string.Empty;
+    
+    [JsonPropertyName("hora_inicio")]
+    [Required]
+    public string HoraInicio { get; set; } = string.Empty;
+    
+    [JsonPropertyName("hora_fin")]
+    [Required]
+    public string HoraFin { get; set; } = string.Empty;
+    
+    [JsonPropertyName("materia_codigo")]
+    [Required]
+    public string MateriaCodigo { get; set; } = string.Empty;
+    
+    public string Salon { get; set; } = string.Empty;
+    
+    [JsonPropertyName("profesor_id")]
+    public Guid? ProfesorId { get; set; }
+}
+
+public class CaracteristicasEspeciales
+{
+    [JsonPropertyName("es_grupo_aceleracion")]
+    public bool EsGrupoAceleracion { get; set; } = false;
+    
+    [JsonPropertyName("es_grupo_refuerzo")]
+    public bool EsGrupoRefuerzo { get; set; } = false;
+    
+    [JsonPropertyName("requiere_atencion_especial")]
+    public bool RequiereAtencionEspecial { get; set; } = false;
+    
+    public string Modalidad { get; set; } = "PRESENCIAL"; // PRESENCIAL, VIRTUAL, HIBRIDA
+    
+    [JsonPropertyName("nivel_bilingue")]
+    public bool NivelBilingue { get; set; } = false;
+    
+    [JsonPropertyName("enfoque_pedagogico")]
+    public string EnfoquePedagogico { get; set; } = "TRADICIONAL";
+}
+
+public class LimitesDisciplinarios
+{
+    [JsonPropertyName("maximo_observaciones_mes")]
+    [Range(1, 10)]
+    public int MaximoObservacionesMes { get; set; } = 3;
+    
+    [JsonPropertyName("requiere_reunion_padres")]
+    [Range(1, 5)]
+    public int RequiereReunionPadres { get; set; } = 2;
+    
+    [JsonPropertyName("politicas_especiales")]
+    public List<string> PoliticasEspeciales { get; set; } = new();
+}
+
+public class ConfiguracionEvaluacionGrupo
+{
+    [JsonPropertyName("permite_trabajo_grupal")]
+    public bool PermiteTrabajoGrupal { get; set; } = true;
+    
+    [JsonPropertyName("maximo_integrantes_grupo")]
+    [Range(2, 8)]
+    public int MaximoIntegrantesGrupo { get; set; } = 4;
+    
+    [JsonPropertyName("requiere_sustentacion_oral")]
+    public bool RequiereSustentacionOral { get; set; } = false;
+    
+    [JsonPropertyName("permite_material_consulta")]
+    public bool PermiteMaterialConsulta { get; set; } = true;
+}
+
+// Configuración de Materias
+public class ConfiguracionMateria
+{
+    [JsonPropertyName("tipo_materia")]
+    public string TipoMateria { get; set; } = "TEORICA"; // TEORICA, PRACTICA, TEORICO_PRACTICA
+    
+    [JsonPropertyName("requiere_laboratorio")]
+    public bool RequiereLaboratorio { get; set; } = false;
+    
+    [JsonPropertyName("intensidad_semanal")]
+    [Range(1, 10)]
+    public int IntensidadSemanal { get; set; } = 4;
+    
+    [JsonPropertyName("permite_trabajo_casa")]
+    public bool PermiteTrabajoEnCasa { get; set; } = true;
+    
+    [JsonPropertyName("evaluacion_especial")]
+    public EvaluacionEspecial EvaluacionEspecial { get; set; } = new();
+    
+    [JsonPropertyName("recursos_necesarios")]
+    public List<string> RecursosNecesarios { get; set; } = new();
+    
+    public List<string> Prerrequisitos { get; set; } = new();
+    
+    public List<string> Competencias { get; set; } = new();
+    
+    public MetodologiaMateria Metodologia { get; set; } = new();
+}
+
+public class EvaluacionEspecial
+{
+    [JsonPropertyName("requiere_proyecto_final")]
+    public bool RequiereProyectoFinal { get; set; } = false;
+    
+    [JsonPropertyName("peso_proyecto")]
+    [Range(0, 100)]
+    public decimal PesoProyecto { get; set; } = 30;
+    
+    [JsonPropertyName("permite_examen_supletorio")]
+    public bool PermiteExamenSupletorio { get; set; } = true;
+    
+    [JsonPropertyName("nota_minima_supletorio")]
+    public decimal NotaMinimaSupletorio { get; set; } = 2.0m;
+    
+    [JsonPropertyName("permite_segunda_oportunidad")]
+    public bool PermiteSegundaOportunidad { get; set; } = true;
+}
+
+public class MetodologiaMateria
+{
+    public string Enfoque { get; set; } = "CONSTRUCTIVISTA";
+    
+    [JsonPropertyName("usa_tecnologia")]
+    public bool UsaTecnologia { get; set; } = true;
+    
+    [JsonPropertyName("requiere_participacion")]
+    public bool RequiereParticipacion { get; set; } = true;
+    
+    [JsonPropertyName("permite_autoevaluacion")]
+    public bool PermiteAutoevaluacion { get; set; } = true;
+}
+
+// Configuración de Notificaciones
+public class ConfiguracionNotificacion
+{
+    [JsonPropertyName("canales_habilitados")]
+    public List<string> CanalesHabilitados { get; set; } = new() { "EMAIL", "SMS", "PUSH" };
+    
+    public string Prioridad { get; set; } = "MEDIA"; // BAJA, MEDIA, ALTA, CRITICA
+    
+    [JsonPropertyName("frecuencia_maxima")]
+    public FrecuenciaMaxima FrecuenciaMaxima { get; set; } = new();
+    
+    public PlantillaNotificacion Plantilla { get; set; } = new();
+    
+    [JsonPropertyName("condiciones_envio")]
+    public CondicionesEnvio CondicionesEnvio { get; set; } = new();
+    
+    public Escalamiento Escalamiento { get; set; } = new();
+    
+    public PersonalizacionNotificacion Personalizacion { get; set; } = new();
+}
+
+public class FrecuenciaMaxima
+{
+    [JsonPropertyName("por_dia")]
+    [Range(1, 50)]
+    public int PorDia { get; set; } = 5;
+    
+    [JsonPropertyName("por_semana")]
+    [Range(1, 200)]
+    public int PorSemana { get; set; } = 20;
+    
+    [JsonPropertyName("por_mes")]
+    [Range(1, 500)]
+    public int PorMes { get; set; } = 50;
+}
+
+public class PlantillaNotificacion
+{
+    [Required]
+    [MaxLength(200)]
+    public string Asunto { get; set; } = string.Empty;
+    
+    [Required]
+    [MaxLength(1000)]
+    public string Cuerpo { get; set; } = string.Empty;
+    
+    [JsonPropertyName("pie_mensaje")]
+    [MaxLength(200)]
+    public string PieMensaje { get; set; } = string.Empty;
+    
+    [JsonPropertyName("usar_firma_html")]
+    public bool UsarFirmaHtml { get; set; } = true;
+    
+    [JsonPropertyName("incluir_logo")]
+    public bool IncluirLogo { get; set; } = true;
+}
+
+public class CondicionesEnvio
+{
+    [JsonPropertyName("horario_permitido")]
+    public HorarioPermitido HorarioPermitido { get; set; } = new();
+    
+    [JsonPropertyName("dias_permitidos")]
+    public List<string> DiasPermitidos { get; set; } = new();
+    
+    [JsonPropertyName("excluir_vacaciones")]
+    public bool ExcluirVacaciones { get; set; } = true;
+    
+    [JsonPropertyName("requiere_confirmacion")]
+    public bool RequiereConfirmacion { get; set; } = false;
+    
+    [JsonPropertyName("validar_numero_telefono")]
+    public bool ValidarNumeroTelefono { get; set; } = true;
+}
+
+public class HorarioPermitido
+{
+    [JsonPropertyName("hora_inicio")]
+    public string HoraInicio { get; set; } = "07:00";
+    
+    [JsonPropertyName("hora_fin")]
+    public string HoraFin { get; set; } = "20:00";
+}
+
+public class Escalamiento
+{
+    [JsonPropertyName("reenviar_si_no_leida")]
+    public bool ReenviarSiNoLeida { get; set; } = true;
+    
+    [JsonPropertyName("tiempo_reenvio_horas")]
+    [Range(1, 168)] // Máximo una semana
+    public int TiempoReenvioHoras { get; set; } = 24;
+    
+    [JsonPropertyName("maximo_reenvios")]
+    [Range(1, 5)]
+    public int MaximoReenvios { get; set; } = 2;
+    
+    [JsonPropertyName("notificar_director")]
+    public bool NotificarDirector { get; set; } = true;
+    
+    [JsonPropertyName("cambiar_canal_escalamiento")]
+    public bool CambiarCanalEscalamiento { get; set; } = true;
+}
+
+public class PersonalizacionNotificacion
+{
+    [JsonPropertyName("variables_disponibles")]
+    public List<string> VariablesDisponibles { get; set; } = new();
+    
+    [JsonPropertyName("permite_html")]
+    public bool PermiteHtml { get; set; } = true;
+    
+    [JsonPropertyName("longitud_maxima")]
+    [Range(100, 2000)]
+    public int LongitudMaxima { get; set; } = 500;
+}
+
+// ===============================================
+// EXTENSIONES Y UTILIDADES
+// ===============================================
+
+public static class ConfiguracionesAdicionalesExtensions
+{
+    // Extensiones para Grupos
+    public static bool TieneConflictoHorario(this ConfiguracionGrupo config, string dia, string horaInicio, string horaFin)
+    {
+        var clasesDelDia = config.HorarioClases.Where(h => h.Dia.Equals(dia, StringComparison.OrdinalIgnoreCase));
+        
+        if (TimeSpan.TryParse(horaInicio, out var inicioNuevo) && 
+            TimeSpan.TryParse(horaFin, out var finNuevo))
+        {
+            foreach (var clase in clasesDelDia)
+            {
+                if (TimeSpan.TryParse(clase.HoraInicio, out var inicioExistente) &&
+                    TimeSpan.TryParse(clase.HoraFin, out var finExistente))
+                {
+                    // Verificar solapamiento
+                    if (inicioNuevo < finExistente && finNuevo > inicioExistente)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        
+        return false;
+    }
+    
+    public static int ObtenerHorasSemanales(this ConfiguracionGrupo config)
+    {
+        var horasTotales = 0;
+        
+        foreach (var clase in config.HorarioClases)
+        {
+            if (TimeSpan.TryParse(clase.HoraInicio, out var inicio) && 
+                TimeSpan.TryParse(clase.HoraFin, out var fin))
+            {
+                horasTotales += (int)(fin - inicio).TotalMinutes / 60;
+            }
+        }
+        
+        return horasTotales;
+    }
+    
+    public static List<string> ObtenerMateriasDelDia(this ConfiguracionGrupo config, string dia)
+    {
+        return config.HorarioClases
+            .Where(h => h.Dia.Equals(dia, StringComparison.OrdinalIgnoreCase))
+            .OrderBy(h => h.HoraInicio)
+            .Select(h => h.MateriaCodigo)
+            .ToList();
+    }
+    
+    // Extensiones para Materias
+    public static bool RequiereRecursosEspeciales(this ConfiguracionMateria config)
+    {
+        var recursosEspeciales = new[] { "LABORATORIO", "COMPUTADOR", "SOFTWARE_ESPECIALIZADO", "INTERNET" };
+        return config.RecursosNecesarios.Any(r => recursosEspeciales.Contains(r.ToUpper()));
+    }
+    
+    public static bool PuedeSerDictadaPor(this ConfiguracionMateria config, List<string> especialidadesProfesor)
+    {
+        // Lógica para verificar si un profesor puede dictar la materia
+        // basado en sus especialidades y los prerrequisitos de la materia
+        return true; // Implementar según lógica de negocio
+    }
+    
+    public static decimal CalcularNotaFinalConProyecto(this ConfiguracionMateria config, decimal notaEvaluaciones, decimal notaProyecto)
+    {
+        if (!config.EvaluacionEspecial.RequiereProyectoFinal)
+            return notaEvaluaciones;
+            
+        var pesoEvaluaciones = (100 - config.EvaluacionEspecial.PesoProyecto) / 100m;
+        var pesoProyecto = config.EvaluacionEspecial.PesoProyecto / 100m;
+        
+        return (notaEvaluaciones * pesoEvaluaciones) + (notaProyecto * pesoProyecto);
+    }
+    
+    // Extensiones para Notificaciones
+    public static bool PuedeEnviarse(this ConfiguracionNotificacion config, DateTime fechaHora)
+    {
+        var diaSemana = fechaHora.DayOfWeek.ToString().ToUpper();
+        var hora = fechaHora.TimeOfDay;
+        
+        // Verificar día permitido
+        if (!config.CondicionesEnvio.DiasPermitidos.Contains(diaSemana, StringComparer.OrdinalIgnoreCase))
+            return false;
+            
+        // Verificar horario
+        if (TimeSpan.TryParse(config.CondicionesEnvio.HorarioPermitido.HoraInicio, out var horaInicio) &&
+            TimeSpan.TryParse(config.CondicionesEnvio.HorarioPermitido.HoraFin, out var horaFin))
+        {
+            if (hora < horaInicio || hora > horaFin)
+                return false;
+        }
+        
+        return true;
+    }
+    
+    public static string ProcesarPlantilla(this PlantillaNotificacion plantilla, Dictionary<string, string> variables)
+    {
+        var mensaje = plantilla.Cuerpo;
+        
+        foreach (var variable in variables)
+        {
+            mensaje = mensaje.Replace(variable.Key, variable.Value);
+        }
+        
+        return mensaje;
+    }
+    
+    public static bool HaAlcanzadoLimiteFrecuencia(this ConfiguracionNotificacion config, 
+        int enviosHoy, int enviosSemana, int enviosMes)
+    {
+        return enviosHoy >= config.FrecuenciaMaxima.PorDia ||
+               enviosSemana >= config.FrecuenciaMaxima.PorSemana ||
+               enviosMes >= config.FrecuenciaMaxima.PorMes;
+    }
+    
+    public static List<string> ValidarConfiguracion(this ConfiguracionNotificacion config)
+    {
+        var errores = new List<string>();
+        
+        if (!config.CanalesHabilitados.Any())
+            errores.Add("Debe habilitar al menos un canal de comunicación");
+            
+        if (string.IsNullOrWhiteSpace(config.Plantilla.Asunto))
+            errores.Add("El asunto de la plantilla es obligatorio");
+            
+        if (string.IsNullOrWhiteSpace(config.Plantilla.Cuerpo))
+            errores.Add("El cuerpo de la plantilla es obligatorio");
+            
+        if (config.FrecuenciaMaxima.PorDia <= 0)
+            errores.Add("La frecuencia máxima por día debe ser mayor a 0");
+            
+        return errores;
+    }
+}

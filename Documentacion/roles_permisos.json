@@ -1,0 +1,321 @@
+// ===============================================
+// TABLA: roles - COLUMNA: permisos
+// ===============================================
+
+// ESTRUCTURA JSON
+{
+  "modulos": {
+    "estudiantes": {
+      "ver": true,
+      "crear": false,
+      "editar": false,
+      "eliminar": false,
+      "exportar": true
+    },
+    "profesores": {
+      "ver": true,
+      "crear": false,
+      "editar": false,
+      "eliminar": false,
+      "asignar_materias": false
+    },
+    "calificaciones": {
+      "ver": true,
+      "crear": true,
+      "editar": true,
+      "eliminar": false,
+      "publicar": true,
+      "ver_otras_materias": false
+    },
+    "asistencia": {
+      "ver": true,
+      "registrar": true,
+      "editar": true,
+      "justificar": false,
+      "reportes": true
+    },
+    "financiero": {
+      "ver_facturas": false,
+      "crear_facturas": false,
+      "recibir_pagos": false,
+      "anular_facturas": false,
+      "descuentos": false,
+      "reportes_financieros": false
+    },
+    "reportes": {
+      "boletines": true,
+      "certificados": false,
+      "listas_estudiantes": true,
+      "reportes_academicos": true,
+      "reportes_financieros": false,
+      "reportes_disciplinarios": true
+    },
+    "comunicaciones": {
+      "enviar_notificaciones": true,
+      "mensajes_acudientes": true,
+      "mensajes_masivos": false,
+      "crear_circulares": false
+    },
+    "administracion": {
+      "gestionar_usuarios": false,
+      "configurar_colegio": false,
+      "gestionar_roles": false,
+      "logs_auditoria": false,
+      "backup_restaurar": false
+    }
+  },
+  "restricciones": {
+    "solo_sus_estudiantes": true,
+    "solo_sus_materias": true,
+    "solo_su_grupo": false,
+    "horario_acceso": {
+      "activo": false,
+      "hora_inicio": "06:00",
+      "hora_fin": "18:00",
+      "dias_semana": ["lunes", "martes", "miercoles", "jueves", "viernes"]
+    },
+    "ip_permitidas": [],
+    "solo_horario_laboral": false
+  },
+  "configuracion_especial": {
+    "puede_ver_notas_finales": true,
+    "puede_editar_despues_publicacion": false,
+    "requiere_autorizacion_cambios": true,
+    "notificar_cambios_importantes": true,
+    "limite_estudiantes_consulta": 100
+  }
+}
+
+// ===============================================
+// MODELOS C# CORRESPONDIENTES
+// ===============================================
+
+using System.Text.Json.Serialization;
+
+public class PermisosRol
+{
+    public ModulosPermisos Modulos { get; set; } = new();
+    public RestriccionesRol Restricciones { get; set; } = new();
+    
+    [JsonPropertyName("configuracion_especial")]
+    public ConfiguracionEspecialRol ConfiguracionEspecial { get; set; } = new();
+}
+
+public class ModulosPermisos
+{
+    public PermisoModulo Estudiantes { get; set; } = new();
+    public PermisoModulo Profesores { get; set; } = new();
+    public PermisoModuloCalificaciones Calificaciones { get; set; } = new();
+    public PermisoModuloAsistencia Asistencia { get; set; } = new();
+    public PermisoModuloFinanciero Financiero { get; set; } = new();
+    public PermisoModuloReportes Reportes { get; set; } = new();
+    public PermisoModuloComunicaciones Comunicaciones { get; set; } = new();
+    public PermisoModuloAdministracion Administracion { get; set; } = new();
+}
+
+public class PermisoModulo
+{
+    public bool Ver { get; set; } = false;
+    public bool Crear { get; set; } = false;
+    public bool Editar { get; set; } = false;
+    public bool Eliminar { get; set; } = false;
+    public bool Exportar { get; set; } = false;
+}
+
+public class PermisoModuloCalificaciones : PermisoModulo
+{
+    public bool Publicar { get; set; } = false;
+    
+    [JsonPropertyName("ver_otras_materias")]
+    public bool VerOtrasMaterias { get; set; } = false;
+}
+
+public class PermisoModuloAsistencia : PermisoModulo
+{
+    public bool Registrar { get; set; } = false;
+    public bool Justificar { get; set; } = false;
+    public bool Reportes { get; set; } = false;
+}
+
+public class PermisoModuloFinanciero
+{
+    [JsonPropertyName("ver_facturas")]
+    public bool VerFacturas { get; set; } = false;
+    
+    [JsonPropertyName("crear_facturas")]
+    public bool CrearFacturas { get; set; } = false;
+    
+    [JsonPropertyName("recibir_pagos")]
+    public bool RecibirPagos { get; set; } = false;
+    
+    [JsonPropertyName("anular_facturas")]
+    public bool AnularFacturas { get; set; } = false;
+    
+    public bool Descuentos { get; set; } = false;
+    
+    [JsonPropertyName("reportes_financieros")]
+    public bool ReportesFinancieros { get; set; } = false;
+}
+
+public class PermisoModuloReportes
+{
+    public bool Boletines { get; set; } = false;
+    public bool Certificados { get; set; } = false;
+    
+    [JsonPropertyName("listas_estudiantes")]
+    public bool ListasEstudiantes { get; set; } = false;
+    
+    [JsonPropertyName("reportes_academicos")]
+    public bool ReportesAcademicos { get; set; } = false;
+    
+    [JsonPropertyName("reportes_financieros")]
+    public bool ReportesFinancieros { get; set; } = false;
+    
+    [JsonPropertyName("reportes_disciplinarios")]
+    public bool ReportesDisciplinarios { get; set; } = false;
+}
+
+public class PermisoModuloComunicaciones
+{
+    [JsonPropertyName("enviar_notificaciones")]
+    public bool EnviarNotificaciones { get; set; } = false;
+    
+    [JsonPropertyName("mensajes_acudientes")]
+    public bool MensajesAcudientes { get; set; } = false;
+    
+    [JsonPropertyName("mensajes_masivos")]
+    public bool MensajesMasivos { get; set; } = false;
+    
+    [JsonPropertyName("crear_circulares")]
+    public bool CrearCirculares { get; set; } = false;
+}
+
+public class PermisoModuloAdministracion
+{
+    [JsonPropertyName("gestionar_usuarios")]
+    public bool GestionarUsuarios { get; set; } = false;
+    
+    [JsonPropertyName("configurar_colegio")]
+    public bool ConfigurarColegio { get; set; } = false;
+    
+    [JsonPropertyName("gestionar_roles")]
+    public bool GestionarRoles { get; set; } = false;
+    
+    [JsonPropertyName("logs_auditoria")]
+    public bool LogsAuditoria { get; set; } = false;
+    
+    [JsonPropertyName("backup_restaurar")]
+    public bool BackupRestaurar { get; set; } = false;
+}
+
+public class RestriccionesRol
+{
+    [JsonPropertyName("solo_sus_estudiantes")]
+    public bool SoloSusEstudiantes { get; set; } = true;
+    
+    [JsonPropertyName("solo_sus_materias")]
+    public bool SoloSusMaterias { get; set; } = true;
+    
+    [JsonPropertyName("solo_su_grupo")]
+    public bool SoloSuGrupo { get; set; } = false;
+    
+    [JsonPropertyName("horario_acceso")]
+    public HorarioAcceso HorarioAcceso { get; set; } = new();
+    
+    [JsonPropertyName("ip_permitidas")]
+    public List<string> IpPermitidas { get; set; } = new();
+    
+    [JsonPropertyName("solo_horario_laboral")]
+    public bool SoloHorarioLaboral { get; set; } = false;
+}
+
+public class HorarioAcceso
+{
+    public bool Activo { get; set; } = false;
+    
+    [JsonPropertyName("hora_inicio")]
+    public string HoraInicio { get; set; } = "06:00";
+    
+    [JsonPropertyName("hora_fin")]
+    public string HoraFin { get; set; } = "18:00";
+    
+    [JsonPropertyName("dias_semana")]
+    public List<string> DiasSemana { get; set; } = new() { "lunes", "martes", "miercoles", "jueves", "viernes" };
+}
+
+public class ConfiguracionEspecialRol
+{
+    [JsonPropertyName("puede_ver_notas_finales")]
+    public bool PuedeVerNotasFinales { get; set; } = true;
+    
+    [JsonPropertyName("puede_editar_despues_publicacion")]
+    public bool PuedeEditarDespuesPublicacion { get; set; } = false;
+    
+    [JsonPropertyName("requiere_autorizacion_cambios")]
+    public bool RequiereAutorizacionCambios { get; set; } = true;
+    
+    [JsonPropertyName("notificar_cambios_importantes")]
+    public bool NotificarCambiosImportantes { get; set; } = true;
+    
+    [JsonPropertyName("limite_estudiantes_consulta")]
+    public int LimiteEstudiantesConsulta { get; set; } = 100;
+}
+
+// ===============================================
+// EXTENSIONES Y UTILIDADES
+// ===============================================
+
+public static class PermisosExtensions
+{
+    public static bool TienePermiso(this PermisosRol permisos, string modulo, string accion)
+    {
+        var moduloObj = modulo.ToLower() switch
+        {
+            "estudiantes" => permisos.Modulos.Estudiantes,
+            "profesores" => permisos.Modulos.Profesores,
+            "calificaciones" => permisos.Modulos.Calificaciones,
+            "asistencia" => permisos.Modulos.Asistencia,
+            _ => null
+        };
+        
+        if (moduloObj == null) return false;
+        
+        return accion.ToLower() switch
+        {
+            "ver" => moduloObj.Ver,
+            "crear" => moduloObj.Crear,
+            "editar" => moduloObj.Editar,
+            "eliminar" => moduloObj.Eliminar,
+            "exportar" => moduloObj.Exportar,
+            _ => false
+        };
+    }
+    
+    public static bool EstaEnHorarioPermitido(this RestriccionesRol restricciones, DateTime fechaHora)
+    {
+        if (!restricciones.HorarioAcceso.Activo)
+            return true;
+            
+        var diaSemana = fechaHora.DayOfWeek.ToString().ToLower();
+        var hora = fechaHora.TimeOfDay;
+        
+        if (!restricciones.HorarioAcceso.DiasSemana.Contains(diaSemana, StringComparer.OrdinalIgnoreCase))
+            return false;
+            
+        if (TimeSpan.TryParse(restricciones.HorarioAcceso.HoraInicio, out var horaInicio) &&
+            TimeSpan.TryParse(restricciones.HorarioAcceso.HoraFin, out var horaFin))
+        {
+            return hora >= horaInicio && hora <= horaFin;
+        }
+        
+        return true;
+    }
+    
+    public static bool EsIpPermitida(this RestriccionesRol restricciones, string ipAddress)
+    {
+        if (!restricciones.IpPermitidas.Any())
+            return true; // Si no hay restricciones de IP, permitir todas
+            
+        return restricciones.IpPermitidas.Contains(ipAddress);
+    }
+}

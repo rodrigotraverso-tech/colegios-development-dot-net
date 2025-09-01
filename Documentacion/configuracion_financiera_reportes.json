@@ -1,0 +1,705 @@
+// ===============================================
+// CONFIGURACIÓN FINANCIERA AVANZADA
+// Para conceptos_facturacion o configuraciones específicas
+// ===============================================
+
+// ESTRUCTURA JSON para configuración financiera
+{
+  "descuentos_disponibles": [
+    {
+      "codigo": "HERMANOS",
+      "nombre": "Descuento por Hermanos",
+      "tipo": "PORCENTAJE",
+      "valor": 10,
+      "aplicable_a": ["PENSION", "MATRICULA"],
+      "condiciones": {
+        "minimo_hermanos": 2,
+        "maximo_descuento": 50,
+        "aplica_al_menor": true,
+        "requiere_autorizacion": false
+      }
+    },
+    {
+      "codigo": "PRONTO_PAGO",
+      "nombre": "Descuento Pronto Pago", 
+      "tipo": "PORCENTAJE",
+      "valor": 5,
+      "aplicable_a": ["PENSION"],
+      "condiciones": {
+        "dias_anticipacion": 10,
+        "solo_pension_completa": true,
+        "minimo_monto": 100000
+      }
+    },
+    {
+      "codigo": "EXCELENCIA_ACADEMICA",
+      "nombre": "Descuento por Excelencia Académica",
+      "tipo": "VALOR_FIJO",
+      "valor": 50000,
+      "aplicable_a": ["PENSION"],
+      "condiciones": {
+        "promedio_minimo": 4.5,
+        "sin_observaciones_disciplinarias": true,
+        "aplica_trimestre_siguiente": true
+      }
+    }
+  ],
+  "recargos": [
+    {
+      "codigo": "MORA",
+      "nombre": "Interés por Mora",
+      "tipo": "PORCENTAJE_MENSUAL",
+      "valor": 2.5,
+      "dias_gracia": 5,
+      "calculo": "SOBRE_SALDO_PENDIENTE",
+      "maximo_acumulable": 25
+    },
+    {
+      "codigo": "REPOSICION_CARNET",
+      "nombre": "Reposición de Carnet",
+      "tipo": "VALOR_FIJO",
+      "valor": 15000,
+      "aplicable_a": ["SERVICIOS"],
+      "requiere_justificacion": true
+    }
+  ],
+  "politicas_pago": {
+    "permite_anticipos": true,
+    "genera_saldo_favor": true,
+    "aplica_saldo_automaticamente": true,
+    "permite_pago_parcial": true,
+    "minimo_pago_parcial": 50000,
+    "maximo_cuotas": 3,
+    "interes_financiacion": 1.5
+  },
+  "configuracion_facturacion": {
+    "dia_corte_mensual": 30,
+    "dias_vencimiento": 30,
+    "incluir_detalle_hermanos": true,
+    "mostrar_saldo_anterior": true,
+    "formato_numero": "FC-{YEAR}-{MONTH:00}-{SEQUENCE:0000}"
+  },
+  "alertas_financieras": {
+    "saldo_vencido_dias": [15, 30, 60],
+    "porcentaje_cartera_alerta": 15,
+    "monto_individual_alerta": 500000,
+    "notificar_coordinacion": true
+  }
+}
+
+// ===============================================
+// CONFIGURACIÓN DE REPORTES PERSONALIZADOS
+// ===============================================
+
+// ESTRUCTURA JSON para configuración de reportes
+{
+  "formato_fecha": "DD/MM/YYYY",
+  "formato_moneda": "$ #,##0.00",
+  "formato_hora": "HH:mm",
+  "encabezado": {
+    "incluir_logo": true,
+    "incluir_direccion": true,
+    "incluir_telefono": true,
+    "incluir_email": true,
+    "texto_personalizado": "Formando líderes del futuro",
+    "mostrar_fecha_generacion": true,
+    "alineacion": "CENTRO"
+  },
+  "pie_pagina": {
+    "incluir_firma_digital": false,
+    "texto_legal": "Este documento es válido sin firma autógrafa",
+    "incluir_fecha_generacion": true,
+    "incluir_numero_pagina": true,
+    "incluir_usuario_generador": true,
+    "texto_personalizado": "Sistema de Gestión Académica"
+  },
+  "marcas_agua": {
+    "activa": false,
+    "texto": "COPIA",
+    "opacidad": 0.1,
+    "angulo": -45,
+    "color": "#CCCCCC",
+    "fuente_tamaño": 40
+  },
+  "configuracion_boletines": {
+    "incluir_foto_estudiante": true,
+    "incluir_observaciones_profesor": true,
+    "incluir_grafica_rendimiento": false,
+    "incluir_comparativo_grupo": false,
+    "incluir_escala_valoracion": true,
+    "mostrar_puesto_estudiante": true,
+    "incluir_inasistencias": true,
+    "formato_calificaciones": "NUMERICO_CUALITATIVO"
+  },
+  "configuracion_certificados": {
+    "incluir_sello_colegio": true,
+    "requiere_firma_rector": true,
+    "requiere_firma_secretaria": true,
+    "papel_seguridad": false,
+    "codigo_verificacion": true,
+    "qr_validacion": true
+  },
+  "configuracion_listas": {
+    "incluir_foto": false,
+    "incluir_telefono_acudiente": true,
+    "incluir_observaciones": false,
+    "ordenar_por": "APELLIDO",
+    "mostrar_numeracion": true,
+    "espacio_para_firmas": true
+  },
+  "configuracion_financiera": {
+    "incluir_detalle_pagos": true,
+    "mostrar_saldos_pendientes": true,
+    "incluir_grafica_pagos": false,
+    "formato_resumen": "TABLA",
+    "incluir_proyecciones": false
+  },
+  "estilos_personalizados": {
+    "fuente_principal": "Arial",
+    "fuente_titulos": "Arial Black",
+    "tamaño_fuente_normal": 10,
+    "tamaño_fuente_titulo": 14,
+    "color_encabezados": "#1565C0",
+    "color_bordes": "#CCCCCC",
+    "espaciado_lineas": 1.2
+  }
+}
+
+// ===============================================
+// MODELOS C# CORRESPONDIENTES
+// ===============================================
+
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
+
+// Configuración Financiera
+public class ConfiguracionFinanciera
+{
+    [JsonPropertyName("descuentos_disponibles")]
+    public List<DescuentoDisponible> DescuentosDisponibles { get; set; } = new();
+    
+    public List<Recargo> Recargos { get; set; } = new();
+    
+    [JsonPropertyName("politicas_pago")]
+    public PoliticasPago PoliticasPago { get; set; } = new();
+    
+    [JsonPropertyName("configuracion_facturacion")]
+    public ConfiguracionFacturacion ConfiguracionFacturacion { get; set; } = new();
+    
+    [JsonPropertyName("alertas_financieras")]
+    public AlertasFinancieras AlertasFinancieras { get; set; } = new();
+}
+
+public class DescuentoDisponible
+{
+    [Required]
+    public string Codigo { get; set; } = string.Empty;
+    
+    [Required]
+    public string Nombre { get; set; } = string.Empty;
+    
+    public string Tipo { get; set; } = "PORCENTAJE"; // PORCENTAJE, VALOR_FIJO
+    
+    [Range(0, 100)]
+    public decimal Valor { get; set; }
+    
+    [JsonPropertyName("aplicable_a")]
+    public List<string> AplicableA { get; set; } = new();
+    
+    public CondicionesDescuento Condiciones { get; set; } = new();
+}
+
+public class CondicionesDescuento
+{
+    [JsonPropertyName("minimo_hermanos")]
+    public int MinimoHermanos { get; set; } = 2;
+    
+    [JsonPropertyName("maximo_descuento")]
+    public decimal MaximoDescuento { get; set; } = 50;
+    
+    [JsonPropertyName("aplica_al_menor")]
+    public bool AplicaAlMenor { get; set; } = true;
+    
+    [JsonPropertyName("requiere_autorizacion")]
+    public bool RequiereAutorizacion { get; set; } = false;
+    
+    [JsonPropertyName("dias_anticipacion")]
+    public int DiasAnticipacion { get; set; } = 10;
+    
+    [JsonPropertyName("solo_pension_completa")]
+    public bool SoloPensionCompleta { get; set; } = true;
+    
+    [JsonPropertyName("minimo_monto")]
+    public decimal MinimoMonto { get; set; } = 0;
+    
+    [JsonPropertyName("promedio_minimo")]
+    public decimal PromedioMinimo { get; set; } = 0;
+    
+    [JsonPropertyName("sin_observaciones_disciplinarias")]
+    public bool SinObservacionesDisciplinarias { get; set; } = false;
+    
+    [JsonPropertyName("aplica_trimestre_siguiente")]
+    public bool AplicaTrimestreSiguiente { get; set; } = false;
+}
+
+public class Recargo
+{
+    [Required]
+    public string Codigo { get; set; } = string.Empty;
+    
+    [Required]
+    public string Nombre { get; set; } = string.Empty;
+    
+    public string Tipo { get; set; } = "PORCENTAJE_MENSUAL";
+    
+    public decimal Valor { get; set; }
+    
+    [JsonPropertyName("dias_gracia")]
+    public int DiasGracia { get; set; } = 5;
+    
+    public string Calculo { get; set; } = "SOBRE_SALDO_PENDIENTE";
+    
+    [JsonPropertyName("maximo_acumulable")]
+    public decimal MaximoAcumulable { get; set; } = 25;
+    
+    [JsonPropertyName("aplicable_a")]
+    public List<string> AplicableA { get; set; } = new();
+    
+    [JsonPropertyName("requiere_justificacion")]
+    public bool RequiereJustificacion { get; set; } = false;
+}
+
+public class PoliticasPago
+{
+    [JsonPropertyName("permite_anticipos")]
+    public bool PermiteAnticipos { get; set; } = true;
+    
+    [JsonPropertyName("genera_saldo_favor")]
+    public bool GeneraSaldoFavor { get; set; } = true;
+    
+    [JsonPropertyName("aplica_saldo_automaticamente")]
+    public bool AplicaSaldoAutomaticamente { get; set; } = true;
+    
+    [JsonPropertyName("permite_pago_parcial")]
+    public bool PermitePagoParcial { get; set; } = true;
+    
+    [JsonPropertyName("minimo_pago_parcial")]
+    public decimal MinimoPagoParcial { get; set; } = 50000;
+    
+    [JsonPropertyName("maximo_cuotas")]
+    public int MaximoCuotas { get; set; } = 3;
+    
+    [JsonPropertyName("interes_financiacion")]
+    public decimal InteresFinanciacion { get; set; } = 1.5m;
+}
+
+public class ConfiguracionFacturacion
+{
+    [JsonPropertyName("dia_corte_mensual")]
+    [Range(1, 31)]
+    public int DiaCorteMensual { get; set; } = 30;
+    
+    [JsonPropertyName("dias_vencimiento")]
+    [Range(1, 90)]
+    public int DiasVencimiento { get; set; } = 30;
+    
+    [JsonPropertyName("incluir_detalle_hermanos")]
+    public bool IncluirDetalleHermanos { get; set; } = true;
+    
+    [JsonPropertyName("mostrar_saldo_anterior")]
+    public bool MostrarSaldoAnterior { get; set; } = true;
+    
+    [JsonPropertyName("formato_numero")]
+    public string FormatoNumero { get; set; } = "FC-{YEAR}-{MONTH:00}-{SEQUENCE:0000}";
+}
+
+public class AlertasFinancieras
+{
+    [JsonPropertyName("saldo_vencido_dias")]
+    public List<int> SaldoVencidoDias { get; set; } = new() { 15, 30, 60 };
+    
+    [JsonPropertyName("porcentaje_cartera_alerta")]
+    public decimal PorcentajeCarteraAlerta { get; set; } = 15;
+    
+    [JsonPropertyName("monto_individual_alerta")]
+    public decimal MontoIndividualAlerta { get; set; } = 500000;
+    
+    [JsonPropertyName("notificar_coordinacion")]
+    public bool NotificarCoordinacion { get; set; } = true;
+}
+
+// Configuración de Reportes
+public class ConfiguracionReportes
+{
+    [JsonPropertyName("formato_fecha")]
+    public string FormatoFecha { get; set; } = "DD/MM/YYYY";
+    
+    [JsonPropertyName("formato_moneda")]
+    public string FormatoMoneda { get; set; } = "$ #,##0.00";
+    
+    [JsonPropertyName("formato_hora")]
+    public string FormatoHora { get; set; } = "HH:mm";
+    
+    public EncabezadoReporte Encabezado { get; set; } = new();
+    
+    [JsonPropertyName("pie_pagina")]
+    public PiePaginaReporte PiePagina { get; set; } = new();
+    
+    [JsonPropertyName("marcas_agua")]
+    public MarcasAgua MarcasAgua { get; set; } = new();
+    
+    [JsonPropertyName("configuracion_boletines")]
+    public ConfiguracionBoletines ConfiguracionBoletines { get; set; } = new();
+    
+    [JsonPropertyName("configuracion_certificados")]
+    public ConfiguracionCertificados ConfiguracionCertificados { get; set; } = new();
+    
+    [JsonPropertyName("configuracion_listas")]
+    public ConfiguracionListas ConfiguracionListas { get; set; } = new();
+    
+    [JsonPropertyName("configuracion_financiera")]
+    public ConfiguracionReportesFinancieros ConfiguracionFinanciera { get; set; } = new();
+    
+    [JsonPropertyName("estilos_personalizados")]
+    public EstilosPersonalizados EstilosPersonalizados { get; set; } = new();
+}
+
+public class EncabezadoReporte
+{
+    [JsonPropertyName("incluir_logo")]
+    public bool IncluirLogo { get; set; } = true;
+    
+    [JsonPropertyName("incluir_direccion")]
+    public bool IncluirDireccion { get; set; } = true;
+    
+    [JsonPropertyName("incluir_telefono")]
+    public bool IncluirTelefono { get; set; } = true;
+    
+    [JsonPropertyName("incluir_email")]
+    public bool IncluirEmail { get; set; } = true;
+    
+    [JsonPropertyName("texto_personalizado")]
+    public string TextoPersonalizado { get; set; } = string.Empty;
+    
+    [JsonPropertyName("mostrar_fecha_generacion")]
+    public bool MostrarFechaGeneracion { get; set; } = true;
+    
+    public string Alineacion { get; set; } = "CENTRO";
+}
+
+public class PiePaginaReporte
+{
+    [JsonPropertyName("incluir_firma_digital")]
+    public bool IncluirFirmaDigital { get; set; } = false;
+    
+    [JsonPropertyName("texto_legal")]
+    public string TextoLegal { get; set; } = string.Empty;
+    
+    [JsonPropertyName("incluir_fecha_generacion")]
+    public bool IncluirFechaGeneracion { get; set; } = true;
+    
+    [JsonPropertyName("incluir_numero_pagina")]
+    public bool IncluirNumeroPagina { get; set; } = true;
+    
+    [JsonPropertyName("incluir_usuario_generador")]
+    public bool IncluirUsuarioGenerador { get; set; } = true;
+    
+    [JsonPropertyName("texto_personalizado")]
+    public string TextoPersonalizado { get; set; } = string.Empty;
+}
+
+public class MarcasAgua
+{
+    public bool Activa { get; set; } = false;
+    public string Texto { get; set; } = "COPIA";
+    public decimal Opacidad { get; set; } = 0.1m;
+    public int Angulo { get; set; } = -45;
+    public string Color { get; set; } = "#CCCCCC";
+    
+    [JsonPropertyName("fuente_tamaño")]
+    public int FuenteTamaño { get; set; } = 40;
+}
+
+public class ConfiguracionBoletines
+{
+    [JsonPropertyName("incluir_foto_estudiante")]
+    public bool IncluirFotoEstudiante { get; set; } = true;
+    
+    [JsonPropertyName("incluir_observaciones_profesor")]
+    public bool IncluirObservacionesProfesor { get; set; } = true;
+    
+    [JsonPropertyName("incluir_grafica_rendimiento")]
+    public bool IncluirGraficaRendimiento { get; set; } = false;
+    
+    [JsonPropertyName("incluir_comparativo_grupo")]
+    public bool IncluirComparativoGrupo { get; set; } = false;
+    
+    [JsonPropertyName("incluir_escala_valoracion")]
+    public bool IncluirEscalaValoracion { get; set; } = true;
+    
+    [JsonPropertyName("mostrar_puesto_estudiante")]
+    public bool MostrarPuestoEstudiante { get; set; } = true;
+    
+    [JsonPropertyName("incluir_inasistencias")]
+    public bool IncluirInasistencias { get; set; } = true;
+    
+    [JsonPropertyName("formato_calificaciones")]
+    public string FormatoCalificaciones { get; set; } = "NUMERICO_CUALITATIVO";
+}
+
+public class ConfiguracionCertificados
+{
+    [JsonPropertyName("incluir_sello_colegio")]
+    public bool IncluirSelloColegio { get; set; } = true;
+    
+    [JsonPropertyName("requiere_firma_rector")]
+    public bool RequiereFirmaRector { get; set; } = true;
+    
+    [JsonPropertyName("requiere_firma_secretaria")]
+    public bool RequiereFirmaSecretaria { get; set; } = true;
+    
+    [JsonPropertyName("papel_seguridad")]
+    public bool PapelSeguridad { get; set; } = false;
+    
+    [JsonPropertyName("codigo_verificacion")]
+    public bool CodigoVerificacion { get; set; } = true;
+    
+    [JsonPropertyName("qr_validacion")]
+    public bool QrValidacion { get; set; } = true;
+}
+
+public class ConfiguracionListas
+{
+    [JsonPropertyName("incluir_foto")]
+    public bool IncluirFoto { get; set; } = false;
+    
+    [JsonPropertyName("incluir_telefono_acudiente")]
+    public bool IncluirTelefonoAcudiente { get; set; } = true;
+    
+    [JsonPropertyName("incluir_observaciones")]
+    public bool IncluirObservaciones { get; set; } = false;
+    
+    [JsonPropertyName("ordenar_por")]
+    public string OrdenarPor { get; set; } = "APELLIDO";
+    
+    [JsonPropertyName("mostrar_numeracion")]
+    public bool MostrarNumeracion { get; set; } = true;
+    
+    [JsonPropertyName("espacio_para_firmas")]
+    public bool EspacioParaFirmas { get; set; } = true;
+}
+
+public class ConfiguracionReportesFinancieros
+{
+    [JsonPropertyName("incluir_detalle_pagos")]
+    public bool IncluirDetallePagos { get; set; } = true;
+    
+    [JsonPropertyName("mostrar_saldos_pendientes")]
+    public bool MostrarSaldosPendientes { get; set; } = true;
+    
+    [JsonPropertyName("incluir_grafica_pagos")]
+    public bool IncluirGraficaPagos { get; set; } = false;
+    
+    [JsonPropertyName("formato_resumen")]
+    public string FormatoResumen { get; set; } = "TABLA";
+    
+    [JsonPropertyName("incluir_proyecciones")]
+    public bool IncluirProyecciones { get; set; } = false;
+}
+
+public class EstilosPersonalizados
+{
+    [JsonPropertyName("fuente_principal")]
+    public string FuentePrincipal { get; set; } = "Arial";
+    
+    [JsonPropertyName("fuente_titulos")]
+    public string FuenteTitulos { get; set; } = "Arial Black";
+    
+    [JsonPropertyName("tamaño_fuente_normal")]
+    public int TamañoFuenteNormal { get; set; } = 10;
+    
+    [JsonPropertyName("tamaño_fuente_titulo")]
+    public int TamañoFuenteTitulo { get; set; } = 14;
+    
+    [JsonPropertyName("color_encabezados")]
+    public string ColorEncabezados { get; set; } = "#1565C0";
+    
+    [JsonPropertyName("color_bordes")]
+    public string ColorBordes { get; set; } = "#CCCCCC";
+    
+    [JsonPropertyName("espaciado_lineas")]
+    public decimal EspaciadoLineas { get; set; } = 1.2m;
+}
+
+// ===============================================
+// EXTENSIONES Y UTILIDADES
+// ===============================================
+
+public static class ConfiguracionFinancieraExtensions
+{
+    public static decimal CalcularDescuento(this DescuentoDisponible descuento, decimal montoBase, 
+        Dictionary<string, object> condiciones)
+    {
+        // Validar condiciones específicas
+        if (!ValidarCondiciones(descuento.Condiciones, condiciones))
+            return 0;
+            
+        return descuento.Tipo switch
+        {
+            "PORCENTAJE" => montoBase * (descuento.Valor / 100),
+            "VALOR_FIJO" => descuento.Valor,
+            _ => 0
+        };
+    }
+    
+    public static decimal CalcularRecargo(this Recargo recargo, decimal saldoPendiente, int diasVencidos)
+    {
+        if (diasVencidos <= recargo.DiasGracia)
+            return 0;
+            
+        var diasFacturables = diasVencidos - recargo.DiasGracia;
+        
+        var recargoCal = recargo.Tipo switch
+        {
+            "PORCENTAJE_MENSUAL" => saldoPendiente * (recargo.Valor / 100) * (diasFacturables / 30m),
+            "VALOR_FIJO" => recargo.Valor,
+            "PORCENTAJE_DIARIO" => saldoPendiente * (recargo.Valor / 100) * diasFacturables,
+            _ => 0
+        };
+        
+        // Aplicar máximo acumulable si está configurado
+        if (recargo.MaximoAcumulable > 0)
+        {
+            var maximoPermitido = saldoPendiente * (recargo.MaximoAcumulable / 100);
+            recargoCal = Math.Min(recargoCal, maximoPermitido);
+        }
+        
+        return Math.Round(recargoCal, 0);
+    }
+    
+    public static bool PuedeAplicarDescuento(this ConfiguracionFinanciera config, string codigoDescuento, 
+        string tipoConcepto, Dictionary<string, object> condiciones)
+    {
+        var descuento = config.DescuentosDisponibles.FirstOrDefault(d => d.Codigo == codigoDescuento);
+        if (descuento == null)
+            return false;
+            
+        if (!descuento.AplicableA.Contains(tipoConcepto, StringComparer.OrdinalIgnoreCase))
+            return false;
+            
+        return ValidarCondiciones(descuento.Condiciones, condiciones);
+    }
+    
+    public static string GenerarNumeroFactura(this ConfiguracionFacturacion config, DateTime fecha, int secuencia)
+    {
+        var formato = config.FormatoNumero;
+        
+        formato = formato.Replace("{YEAR}", fecha.Year.ToString());
+        formato = formato.Replace("{MONTH:00}", fecha.Month.ToString("00"));
+        formato = formato.Replace("{MONTH}", fecha.Month.ToString());
+        formato = formato.Replace("{DAY:00}", fecha.Day.ToString("00"));
+        formato = formato.Replace("{SEQUENCE:0000}", secuencia.ToString("0000"));
+        formato = formato.Replace("{SEQUENCE}", secuencia.ToString());
+        
+        return formato;
+    }
+    
+    public static bool RequiereAlerta(this AlertasFinancieras alertas, decimal saldoVencido, 
+        int diasVencidos, decimal porcentajeCartera)
+    {
+        return saldoVencido >= alertas.MontoIndividualAlerta ||
+               alertas.SaldoVencidoDias.Contains(diasVencidos) ||
+               porcentajeCartera >= alertas.PorcentajeCarteraAlerta;
+    }
+    
+    private static bool ValidarCondiciones(CondicionesDescuento condiciones, Dictionary<string, object> valores)
+    {
+        // Validar hermanos
+        if (valores.ContainsKey("numeroHermanos") && valores["numeroHermanos"] is int hermanos)
+        {
+            if (hermanos < condiciones.MinimoHermanos)
+                return false;
+        }
+        
+        // Validar promedio académico
+        if (condiciones.PromedioMinimo > 0 && valores.ContainsKey("promedio") && valores["promedio"] is decimal promedio)
+        {
+            if (promedio < condiciones.PromedioMinimo)
+                return false;
+        }
+        
+        // Validar monto mínimo
+        if (condiciones.MinimoMonto > 0 && valores.ContainsKey("monto") && valores["monto"] is decimal monto)
+        {
+            if (monto < condiciones.MinimoMonto)
+                return false;
+        }
+        
+        // Validar observaciones disciplinarias
+        if (condiciones.SinObservacionesDisciplinarias && valores.ContainsKey("tieneObservaciones") && 
+            valores["tieneObservaciones"] is bool tieneObs && tieneObs)
+        {
+            return false;
+        }
+        
+        return true;
+    }
+}
+
+public static class ConfiguracionReportesExtensions
+{
+    public static Dictionary<string, string> ObtenerEstilosCSS(this EstilosPersonalizados estilos)
+    {
+        return new Dictionary<string, string>
+        {
+            ["font-family"] = estilos.FuentePrincipal,
+            ["font-size"] = $"{estilos.TamañoFuenteNormal}pt",
+            ["line-height"] = estilos.EspaciadoLineas.ToString(),
+            ["color"] = "#000000",
+            [".titulo"] = $"font-family: {estilos.FuenteTitulos}; font-size: {estilos.TamañoFuenteTitulo}pt; color: {estilos.ColorEncabezados};",
+            [".encabezado"] = $"color: {estilos.ColorEncabezados}; font-weight: bold;",
+            ["table"] = $"border-collapse: collapse; border: 1px solid {estilos.ColorBordes};",
+            ["td, th"] = $"border: 1px solid {estilos.ColorBordes}; padding: 4px;"
+        };
+    }
+    
+    public static string AplicarFormatoFecha(this ConfiguracionReportes config, DateTime fecha)
+    {
+        return config.FormatoFecha switch
+        {
+            "DD/MM/YYYY" => fecha.ToString("dd/MM/yyyy"),
+            "MM/DD/YYYY" => fecha.ToString("MM/dd/yyyy"),
+            "YYYY-MM-DD" => fecha.ToString("yyyy-MM-dd"),
+            "DD-MM-YYYY" => fecha.ToString("dd-MM-yyyy"),
+            _ => fecha.ToString("dd/MM/yyyy")
+        };
+    }
+    
+    public static string AplicarFormatoMoneda(this ConfiguracionReportes config, decimal valor)
+    {
+        return config.FormatoMoneda switch
+        {
+            "$ #,##0.00" => valor.ToString("$ #,##0.00"),
+            "$ #,##0" => valor.ToString("$ #,##0"),
+            "#,##0.00" => valor.ToString("#,##0.00"),
+            "#,##0" => valor.ToString("#,##0"),
+            _ => valor.ToString("$ #,##0.00")
+        };
+    }
+    
+    public static bool RequiereFirmasDigitales(this ConfiguracionCertificados config)
+    {
+        return config.RequiereFirmaRector || config.RequiereFirmaSecretaria;
+    }
+    
+    public static string GenerarCodigoVerificacion(this ConfiguracionCertificados config, 
+        Guid documentoId, DateTime fecha)
+    {
+        if (!config.CodigoVerificacion)
+            return string.Empty;
+            
+        // Generar código basado en documento y fecha
+        var hash = $"{documentoId:N}{fecha:yyyyMMdd}".GetHashCode();
+        return Math.Abs(hash).ToString("X8");
+    }
+}

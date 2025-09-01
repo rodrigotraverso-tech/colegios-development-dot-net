@@ -1,0 +1,119 @@
+// ===============================================
+// TABLA: colegios - COLUMNA: colores_tema
+// ===============================================
+
+// ESTRUCTURA JSON
+{
+  "primario": "#1565C0",
+  "secundario": "#FFA726",
+  "acento": "#43A047",
+  "fondo": "#F5F5F5",
+  "texto_primario": "#212121",
+  "texto_secundario": "#757575",
+  "error": "#D32F2F",
+  "advertencia": "#F57C00",
+  "exito": "#388E3C",
+  "informacion": "#1976D2",
+  "superficie": "#FFFFFF",
+  "superficie_variante": "#F8F9FA",
+  "borde": "#E0E0E0",
+  "sombra": "rgba(0, 0, 0, 0.12)",
+  "hover": "#E3F2FD",
+  "activo": "#BBDEFB",
+  "deshabilitado": "#BDBDBD",
+  "link": "#1976D2",
+  "link_visitado": "#7B1FA2"
+}
+
+// ===============================================
+// MODELO C# CORRESPONDIENTE
+// ===============================================
+
+using System.Text.Json.Serialization;
+
+public class ColoresTema
+{
+    public string Primario { get; set; } = "#1565C0";
+    public string Secundario { get; set; } = "#FFA726";
+    public string Acento { get; set; } = "#43A047";
+    public string Fondo { get; set; } = "#F5F5F5";
+    
+    [JsonPropertyName("texto_primario")]
+    public string TextoPrimario { get; set; } = "#212121";
+    
+    [JsonPropertyName("texto_secundario")]
+    public string TextoSecundario { get; set; } = "#757575";
+    
+    public string Error { get; set; } = "#D32F2F";
+    public string Advertencia { get; set; } = "#F57C00";
+    public string Exito { get; set; } = "#388E3C";
+    public string Informacion { get; set; } = "#1976D2";
+    public string Superficie { get; set; } = "#FFFFFF";
+    
+    [JsonPropertyName("superficie_variante")]
+    public string SuperficieVariante { get; set; } = "#F8F9FA";
+    
+    public string Borde { get; set; } = "#E0E0E0";
+    public string Sombra { get; set; } = "rgba(0, 0, 0, 0.12)";
+    public string Hover { get; set; } = "#E3F2FD";
+    public string Activo { get; set; } = "#BBDEFB";
+    public string Deshabilitado { get; set; } = "#BDBDBD";
+    public string Link { get; set; } = "#1976D2";
+    
+    [JsonPropertyName("link_visitado")]
+    public string LinkVisitado { get; set; } = "#7B1FA2";
+}
+
+// ===============================================
+// EXTENSIONES Y UTILIDADES
+// ===============================================
+
+public static class ColoresTemaExtensions
+{
+    public static bool EsColorValido(string color)
+    {
+        if (string.IsNullOrWhiteSpace(color))
+            return false;
+            
+        // Validar formato hexadecimal (#RRGGBB)
+        if (color.StartsWith("#") && color.Length == 7)
+        {
+            return color.Skip(1).All(c => char.IsDigit(c) || 
+                "ABCDEFabcdef".Contains(c));
+        }
+        
+        // Validar formato rgba
+        if (color.StartsWith("rgba(") && color.EndsWith(")"))
+        {
+            return true; // Validación más compleja si es necesario
+        }
+        
+        return false;
+    }
+    
+    public static Dictionary<string, string> ObtenerCSSVariables(this ColoresTema colores)
+    {
+        return new Dictionary<string, string>
+        {
+            ["--color-primario"] = colores.Primario,
+            ["--color-secundario"] = colores.Secundario,
+            ["--color-acento"] = colores.Acento,
+            ["--color-fondo"] = colores.Fondo,
+            ["--color-texto-primario"] = colores.TextoPrimario,
+            ["--color-texto-secundario"] = colores.TextoSecundario,
+            ["--color-error"] = colores.Error,
+            ["--color-advertencia"] = colores.Advertencia,
+            ["--color-exito"] = colores.Exito,
+            ["--color-informacion"] = colores.Informacion,
+            ["--color-superficie"] = colores.Superficie,
+            ["--color-superficie-variante"] = colores.SuperficieVariante,
+            ["--color-borde"] = colores.Borde,
+            ["--color-sombra"] = colores.Sombra,
+            ["--color-hover"] = colores.Hover,
+            ["--color-activo"] = colores.Activo,
+            ["--color-deshabilitado"] = colores.Deshabilitado,
+            ["--color-link"] = colores.Link,
+            ["--color-link-visitado"] = colores.LinkVisitado
+        };
+    }
+}

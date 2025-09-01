@@ -1,0 +1,359 @@
+// ===============================================
+// TABLA: anos_academicos - COLUMNA: configuracion
+// ===============================================
+
+// ESTRUCTURA JSON
+{
+  "periodos_academicos": [
+    {
+      "numero": 1,
+      "nombre": "Primer Período",
+      "fecha_inicio": "2024-02-01",
+      "fecha_fin": "2024-04-30",
+      "peso_porcentual": 25,
+      "permite_recuperacion": true,
+      "fecha_limite_notas": "2024-05-07"
+    },
+    {
+      "numero": 2,
+      "nombre": "Segundo Período",
+      "fecha_inicio": "2024-05-01",
+      "fecha_fin": "2024-07-31",
+      "peso_porcentual": 25,
+      "permite_recuperacion": true,
+      "fecha_limite_notas": "2024-08-07"
+    },
+    {
+      "numero": 3,
+      "nombre": "Tercer Período",
+      "fecha_inicio": "2024-08-01",
+      "fecha_fin": "2024-09-30",
+      "peso_porcentual": 25,
+      "permite_recuperacion": true,
+      "fecha_limite_notas": "2024-10-07"
+    },
+    {
+      "numero": 4,
+      "nombre": "Cuarto Período",
+      "fecha_inicio": "2024-10-01",
+      "fecha_fin": "2024-11-30",
+      "peso_porcentual": 25,
+      "permite_recuperacion": false,
+      "fecha_limite_notas": "2024-12-07"
+    }
+  ],
+  "escala_calificacion": {
+    "minima": 1.0,
+    "maxima": 5.0,
+    "decimales": 1,
+    "nota_aprobacion": 3.0,
+    "equivalencias": {
+      "4.6-5.0": "Superior",
+      "4.0-4.5": "Alto", 
+      "3.0-3.9": "Básico",
+      "1.0-2.9": "Bajo"
+    }
+  },
+  "calendario_especial": {
+    "vacaciones": [
+      {
+        "nombre": "Semana Santa",
+        "fecha_inicio": "2024-03-25",
+        "fecha_fin": "2024-03-29",
+        "tipo": "RELIGIOSA"
+      },
+      {
+        "nombre": "Vacaciones de Mitad de Año",
+        "fecha_inicio": "2024-06-15", 
+        "fecha_fin": "2024-07-15",
+        "tipo": "ACADEMICA"
+      },
+      {
+        "nombre": "Receso de Octubre",
+        "fecha_inicio": "2024-10-14",
+        "fecha_fin": "2024-10-18",
+        "tipo": "ACADEMICA"
+      }
+    ],
+    "fechas_especiales": [
+      {
+        "fecha": "2024-04-23",
+        "nombre": "Día del Idioma",
+        "tipo": "EVENTO_ACADEMICO"
+      },
+      {
+        "fecha": "2024-09-15",
+        "nombre": "Día del Colegio",
+        "tipo": "INSTITUCIONAL"
+      },
+      {
+        "fecha": "2024-11-11",
+        "nombre": "Día del Estudiante",
+        "tipo": "CELEBRACION"
+      }
+    ]
+  },
+  "configuracion_evaluacion": {
+    "permite_extemporaneas": true,
+    "dias_limite_extemporaneas": 7,
+    "requiere_justificacion": true,
+    "calificacion_maxima_extemporanea": 3.5,
+    "tipos_evaluacion_periodo": [
+      {
+        "codigo": "QUIZ",
+        "nombre": "Quiz",
+        "porcentaje_minimo": 10,
+        "porcentaje_maximo": 30
+      },
+      {
+        "codigo": "TALLER", 
+        "nombre": "Taller",
+        "porcentaje_minimo": 15,
+        "porcentaje_maximo": 35
+      },
+      {
+        "codigo": "PARCIAL", 
+        "nombre": "Examen Parcial",
+        "porcentaje_minimo": 20,
+        "porcentaje_maximo": 50
+      },
+      {
+        "codigo": "PARTICIPACION",
+        "nombre": "Participación",
+        "porcentaje_minimo": 5,
+        "porcentaje_maximo": 20
+      }
+    ]
+  }
+}
+
+// ===============================================
+// MODELOS C# CORRESPONDIENTES
+// ===============================================
+
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
+
+public class ConfiguracionAnoAcademico
+{
+    [JsonPropertyName("periodos_academicos")]
+    public List<PeriodoAcademicoConfig> PeriodosAcademicos { get; set; } = new();
+    
+    [JsonPropertyName("escala_calificacion")]
+    public EscalaCalificacion EscalaCalificacion { get; set; } = new();
+    
+    [JsonPropertyName("calendario_especial")]
+    public CalendarioEspecial CalendarioEspecial { get; set; } = new();
+    
+    [JsonPropertyName("configuracion_evaluacion")]
+    public ConfiguracionEvaluacion ConfiguracionEvaluacion { get; set; } = new();
+}
+
+public class PeriodoAcademicoConfig
+{
+    public int Numero { get; set; }
+    
+    [Required]
+    public string Nombre { get; set; } = string.Empty;
+    
+    [JsonPropertyName("fecha_inicio")]
+    public DateTime FechaInicio { get; set; }
+    
+    [JsonPropertyName("fecha_fin")]
+    public DateTime FechaFin { get; set; }
+    
+    [JsonPropertyName("peso_porcentual")]
+    [Range(0, 100)]
+    public decimal PesoPorcentual { get; set; }
+    
+    [JsonPropertyName("permite_recuperacion")]
+    public bool PermiteRecuperacion { get; set; } = true;
+    
+    [JsonPropertyName("fecha_limite_notas")]
+    public DateTime FechaLimiteNotas { get; set; }
+}
+
+public class EscalaCalificacion
+{
+    [Range(0, 10)]
+    public decimal Minima { get; set; } = 1.0m;
+    
+    [Range(1, 10)]
+    public decimal Maxima { get; set; } = 5.0m;
+    
+    [Range(0, 3)]
+    public int Decimales { get; set; } = 1;
+    
+    [JsonPropertyName("nota_aprobacion")]
+    public decimal NotaAprobacion { get; set; } = 3.0m;
+    
+    public Dictionary<string, string> Equivalencias { get; set; } = new();
+}
+
+public class CalendarioEspecial
+{
+    public List<VacacionConfig> Vacaciones { get; set; } = new();
+    
+    [JsonPropertyName("fechas_especiales")]
+    public List<FechaEspecialConfig> FechasEspeciales { get; set; } = new();
+}
+
+public class VacacionConfig
+{
+    [Required]
+    public string Nombre { get; set; } = string.Empty;
+    
+    [JsonPropertyName("fecha_inicio")]
+    public DateTime FechaInicio { get; set; }
+    
+    [JsonPropertyName("fecha_fin")]
+    public DateTime FechaFin { get; set; }
+    
+    public string Tipo { get; set; } = "ACADEMICA"; // ACADEMICA, RELIGIOSA, NACIONAL
+}
+
+public class FechaEspecialConfig
+{
+    public DateTime Fecha { get; set; }
+    
+    [Required]
+    public string Nombre { get; set; } = string.Empty;
+    
+    public string Tipo { get; set; } = "EVENTO_ACADEMICO"; // EVENTO_ACADEMICO, INSTITUCIONAL, CELEBRACION
+}
+
+public class ConfiguracionEvaluacion
+{
+    [JsonPropertyName("permite_extemporaneas")]
+    public bool PermiteExtemporaneas { get; set; } = true;
+    
+    [JsonPropertyName("dias_limite_extemporaneas")]
+    [Range(1, 30)]
+    public int DiasLimiteExtemporaneas { get; set; } = 7;
+    
+    [JsonPropertyName("requiere_justificacion")]
+    public bool RequiereJustificacion { get; set; } = true;
+    
+    [JsonPropertyName("calificacion_maxima_extemporanea")]
+    public decimal CalificacionMaximaExtemporanea { get; set; } = 3.5m;
+    
+    [JsonPropertyName("tipos_evaluacion_periodo")]
+    public List<TipoEvaluacionConfig> TiposEvaluacionPeriodo { get; set; } = new();
+}
+
+public class TipoEvaluacionConfig
+{
+    [Required]
+    public string Codigo { get; set; } = string.Empty;
+    
+    [Required]
+    public string Nombre { get; set; } = string.Empty;
+    
+    [JsonPropertyName("porcentaje_minimo")]
+    [Range(0, 100)]
+    public decimal PorcentajeMinimo { get; set; }
+    
+    [JsonPropertyName("porcentaje_maximo")]
+    [Range(0, 100)]
+    public decimal PorcentajeMaximo { get; set; }
+}
+
+// ===============================================
+// EXTENSIONES Y UTILIDADES
+// ===============================================
+
+public static class ConfiguracionAnoAcademicoExtensions
+{
+    public static bool EsCalificacionValida(this EscalaCalificacion escala, decimal calificacion)
+    {
+        return calificacion >= escala.Minima && calificacion <= escala.Maxima;
+    }
+    
+    public static string ObtenerEquivalenciaCualitativa(this EscalaCalificacion escala, decimal calificacion)
+    {
+        foreach (var equivalencia in escala.Equivalencias)
+        {
+            var rango = equivalencia.Key.Split('-');
+            if (rango.Length == 2 && 
+                decimal.TryParse(rango[0], out var min) && 
+                decimal.TryParse(rango[1], out var max))
+            {
+                if (calificacion >= min && calificacion <= max)
+                {
+                    return equivalencia.Value;
+                }
+            }
+        }
+        return "Sin Equivalencia";
+    }
+    
+    public static PeriodoAcademicoConfig? ObtenerPeriodoActual(this ConfiguracionAnoAcademico config, DateTime fecha)
+    {
+        return config.PeriodosAcademicos
+            .FirstOrDefault(p => fecha >= p.FechaInicio && fecha <= p.FechaFin);
+    }
+    
+    public static bool EstaEnVacaciones(this CalendarioEspecial calendario, DateTime fecha)
+    {
+        return calendario.Vacaciones
+            .Any(v => fecha >= v.FechaInicio && fecha <= v.FechaFin);
+    }
+    
+    public static List<FechaEspecialConfig> ObtenerEventosDelMes(this CalendarioEspecial calendario, int mes, int año)
+    {
+        return calendario.FechasEspeciales
+            .Where(f => f.Fecha.Month == mes && f.Fecha.Year == año)
+            .OrderBy(f => f.Fecha)
+            .ToList();
+    }
+    
+    public static bool ValidarDistribucionPorcentajes(this List<TipoEvaluacionConfig> tipos)
+    {
+        // Validar que la suma de porcentajes mínimos no exceda 100
+        var sumaMinimos = tipos.Sum(t => t.PorcentajeMinimo);
+        var sumaMaximos = tipos.Sum(t => t.PorcentajeMaximo);
+        
+        return sumaMinimos <= 100 && sumaMaximos >= 100;
+    }
+    
+    public static decimal CalcularNotaFinal(this List<PeriodoAcademicoConfig> periodos, Dictionary<int, decimal> notasPorPeriodo)
+    {
+        decimal notaFinal = 0;
+        decimal sumaPresosUsados = 0;
+        
+        foreach (var periodo in periodos)
+        {
+            if (notasPorPeriodo.ContainsKey(periodo.Numero))
+            {
+                notaFinal += notasPorPeriodo[periodo.Numero] * (periodo.PesoPorcentual / 100);
+                sumaPresosUsados += periodo.PesoPorcentual;
+            }
+        }
+        
+        // Si no todos los períodos tienen nota, ajustar proporcionalmente
+        if (sumaPresosUsados > 0 && sumaPresosUsados < 100)
+        {
+            notaFinal = notaFinal * (100 / sumaPresosUsados);
+        }
+        
+        return Math.Round(notaFinal, 1);
+    }
+    
+    public static bool PuedeRecuperar(this ConfiguracionAnoAcademico config, int numeroPeriodo, DateTime fechaActual)
+    {
+        var periodo = config.PeriodosAcademicos.FirstOrDefault(p => p.Numero == numeroPeriodo);
+        if (periodo == null || !periodo.PermiteRecuperacion)
+            return false;
+            
+        if (!config.ConfiguracionEvaluacion.PermiteExtemporaneas)
+            return false;
+            
+        var diasTranscurridos = (fechaActual - periodo.FechaFin).Days;
+        return diasTranscurridos <= config.ConfiguracionEvaluacion.DiasLimiteExtemporaneas;
+    }
+    
+    public static bool EsFechaLimiteNotas(this PeriodoAcademicoConfig periodo, DateTime fecha)
+    {
+        return fecha.Date == periodo.FechaLimiteNotas.Date;
+    }
+}

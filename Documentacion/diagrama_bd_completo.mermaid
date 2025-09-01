@@ -1,0 +1,468 @@
+erDiagram
+    %% ===============================================
+    %% SISTEMA DE GESTIÓN ACADÉMICA MULTI-COLEGIO
+    %% Diagrama con todas las modificaciones aplicadas
+    %% ===============================================
+
+    %% Configuración Global
+    colegios {
+        UUID id PK
+        VARCHAR codigo UK
+        VARCHAR nombre
+        TEXT direccion
+        VARCHAR telefono
+        VARCHAR email
+        VARCHAR logo_url
+        JSONB colores_tema "Personalización colores"
+        JSONB configuracion "Config integral colegio"
+        BOOLEAN activo
+        TIMESTAMP fecha_creacion
+        TIMESTAMP fecha_actualizacion
+    }
+
+    tipos_documento {
+        SERIAL id PK
+        VARCHAR codigo UK
+        VARCHAR nombre
+        BOOLEAN activo
+    }
+
+    tipos_usuario {
+        SERIAL id PK
+        VARCHAR codigo UK
+        VARCHAR nombre
+        TEXT descripcion
+        BOOLEAN activo
+    }
+
+    %% Gestión de Usuarios e Identidades
+    usuarios {
+        UUID id PK
+        VARCHAR username UK
+        VARCHAR email UK
+        VARCHAR password_hash
+        VARCHAR salt
+        BOOLEAN activo
+        BOOLEAN requiere_cambio_password
+        TIMESTAMP ultimo_acceso
+        INTEGER intentos_fallidos
+        TIMESTAMP bloqueado_hasta
+        TIMESTAMP fecha_creacion
+        TIMESTAMP fecha_actualizacion
+    }
+
+    roles {
+        UUID id PK
+        UUID colegio_id FK "NULL para roles globales"
+        VARCHAR codigo
+        VARCHAR nombre
+        TEXT descripcion
+        JSONB permisos "Sistema granular permisos"
+        BOOLEAN activo
+    }
+
+    usuario_roles {
+        UUID id PK
+        UUID usuario_id FK
+        UUID rol_id FK
+        UUID colegio_id FK "NULL para roles globales"
+        BOOLEAN activo
+        TIMESTAMP fecha_asignacion
+    }
+
+    %% Estructura Académica
+    anos_academicos {
+        UUID id PK
+        UUID colegio_id FK
+        VARCHAR codigo
+        VARCHAR nombre
+        DATE fecha_inicio
+        DATE fecha_fin
+        BOOLEAN activo
+        JSONB configuracion "Períodos, escalas, calendario"
+    }
+
+    niveles_educativos {
+        UUID id PK
+        UUID colegio_id FK
+        VARCHAR codigo
+        VARCHAR nombre
+        INTEGER orden
+        BOOLEAN activo
+    }
+
+    grados {
+        UUID id PK
+        UUID nivel_educativo_id FK
+        UUID colegio_id FK
+        VARCHAR codigo
+        VARCHAR nombre
+        INTEGER orden
+        BOOLEAN activo
+    }
+
+    grupos {
+        UUID id PK
+        UUID grado_id FK
+        UUID ano_academico_id FK
+        UUID colegio_id FK
+        VARCHAR codigo
+        VARCHAR nombre
+        INTEGER capacidad_maxima
+        UUID director_grupo_id FK
+        BOOLEAN activo
+    }
+
+    materias {
+        UUID id PK
+        UUID colegio_id FK
+        VARCHAR codigo
+        VARCHAR nombre
+        TEXT descripcion
+        VARCHAR area
+        BOOLEAN activo
+    }
+
+    pensum {
+        UUID id PK
+        UUID grado_id FK
+        UUID materia_id FK
+        UUID colegio_id FK
+        UUID ano_academico_id FK
+        INTEGER intensidad_horaria
+        BOOLEAN es_obligatoria
+        BOOLEAN activo
+    }
+
+    %% Gestión de Personas
+    personas {
+        UUID id PK
+        INTEGER tipo_documento_id FK
+        VARCHAR numero_documento
+        VARCHAR nombres
+        VARCHAR segundo_nombre "NUEVO CAMPO"
+        VARCHAR apellidos
+        VARCHAR segundo_apellido "NUEVO CAMPO"
+        DATE fecha_nacimiento
+        CHAR genero
+        TEXT direccion
+        VARCHAR telefono
+        VARCHAR celular
+        VARCHAR email
+        VARCHAR foto_url
+        BOOLEAN activo
+        TIMESTAMP fecha_creacion
+        TIMESTAMP fecha_actualizacion
+    }
+
+    profesores {
+        UUID id PK
+        UUID persona_id FK
+        UUID usuario_id FK
+        VARCHAR codigo_empleado UK
+        TEXT[] especialidades
+        DATE fecha_ingreso
+        BOOLEAN activo
+    }
+
+    profesor_colegios {
+        UUID id PK
+        UUID profesor_id FK
+        UUID colegio_id FK
+        BOOLEAN activo
+        DATE fecha_ingreso
+    }
+
+    estudiantes {
+        UUID id PK
+        UUID persona_id FK
+        VARCHAR codigo_estudiante UK
+        BOOLEAN activo
+    }
+
+    matriculas {
+        UUID id PK
+        UUID estudiante_id FK
+        UUID colegio_id FK
+        UUID ano_academico_id FK
+        UUID grupo_id FK
+        DATE fecha_matricula
+        VARCHAR estado
+        TEXT observaciones
+    }
+
+    acudientes {
+        UUID id PK
+        UUID persona_id FK
+        UUID usuario_id FK
+        VARCHAR profesion
+        VARCHAR empresa
+        BOOLEAN activo
+    }
+
+    estudiante_acudientes {
+        UUID id PK
+        UUID estudiante_id FK
+        UUID acudiente_id FK
+        VARCHAR parentesco
+        BOOLEAN es_responsable_financiero
+        BOOLEAN es_contacto_emergencia
+        BOOLEAN autorizado_recoger
+        BOOLEAN activo
+    }
+
+    %% Gestión Académica y Evaluaciones
+    periodos_academicos {
+        UUID id PK
+        UUID ano_academico_id FK
+        UUID colegio_id FK
+        INTEGER numero
+        VARCHAR nombre
+        DATE fecha_inicio
+        DATE fecha_fin
+        BOOLEAN activo
+    }
+
+    asignaciones {
+        UUID id PK
+        UUID profesor_id FK
+        UUID grupo_id FK
+        UUID materia_id FK
+        UUID colegio_id FK
+        UUID ano_academico_id FK
+        BOOLEAN activo
+    }
+
+    tipos_evaluacion {
+        UUID id PK
+        UUID colegio_id FK
+        VARCHAR codigo
+        VARCHAR nombre
+        TEXT descripcion
+        DECIMAL porcentaje
+        BOOLEAN activo
+    }
+
+    calificaciones {
+        UUID id PK
+        UUID estudiante_id FK
+        UUID asignacion_id FK
+        UUID periodo_academico_id FK
+        UUID tipo_evaluacion_id FK
+        DECIMAL calificacion
+        TEXT observaciones
+        DATE fecha_calificacion
+        UUID profesor_id FK
+        UUID colegio_id FK
+    }
+
+    asistencia {
+        UUID id PK
+        UUID estudiante_id FK
+        UUID grupo_id FK
+        DATE fecha
+        VARCHAR estado
+        TEXT observaciones
+        UUID registrado_por FK
+        UUID colegio_id FK
+        TIMESTAMP fecha_registro
+    }
+
+    %% Gestión Financiera
+    conceptos_facturacion {
+        UUID id PK
+        UUID colegio_id FK
+        VARCHAR codigo
+        VARCHAR nombre
+        TEXT descripcion
+        DECIMAL valor_base
+        BOOLEAN es_obligatorio
+        VARCHAR periodicidad
+        BOOLEAN activo
+    }
+
+    facturas {
+        UUID id PK
+        VARCHAR numero_factura
+        UUID acudiente_id FK
+        UUID colegio_id FK
+        DATE fecha_factura
+        DATE fecha_vencimiento
+        DECIMAL subtotal
+        DECIMAL descuentos
+        DECIMAL total
+        VARCHAR estado
+        TEXT observaciones
+        TIMESTAMP fecha_creacion
+    }
+
+    factura_detalles {
+        UUID id PK
+        UUID factura_id FK
+        UUID concepto_facturacion_id FK
+        UUID estudiante_id FK
+        INTEGER cantidad
+        DECIMAL valor_unitario
+        DECIMAL descuento
+        DECIMAL valor_total
+    }
+
+    pagos {
+        UUID id PK
+        UUID factura_id FK
+        DATE fecha_pago
+        DECIMAL valor_pago
+        VARCHAR metodo_pago
+        VARCHAR referencia
+        TEXT observaciones
+        UUID registrado_por FK
+        TIMESTAMP fecha_registro
+    }
+
+    %% Comunicación y Notificaciones
+    tipos_notificacion {
+        SERIAL id PK
+        VARCHAR codigo UK
+        VARCHAR nombre
+        TEXT descripcion
+        BOOLEAN activo
+    }
+
+    notificaciones {
+        UUID id PK
+        UUID colegio_id FK
+        INTEGER tipo_notificacion_id FK
+        VARCHAR titulo
+        TEXT mensaje
+        UUID usuario_emisor_id FK
+        TIMESTAMP fecha_creacion
+        TIMESTAMP fecha_programada
+        BOOLEAN activo
+    }
+
+    notificacion_destinatarios {
+        UUID id PK
+        UUID notificacion_id FK
+        UUID usuario_id FK
+        BOOLEAN leida
+        TIMESTAMP fecha_lectura
+    }
+
+    mensajes {
+        UUID id PK
+        UUID colegio_id FK
+        UUID usuario_emisor_id FK
+        UUID usuario_receptor_id FK
+        VARCHAR asunto
+        TEXT mensaje
+        BOOLEAN leido
+        TIMESTAMP fecha_envio
+        TIMESTAMP fecha_lectura
+    }
+
+    %% Auditoría y Logs
+    logs_auditoria {
+        UUID id PK
+        UUID colegio_id FK
+        UUID usuario_id FK
+        VARCHAR tabla
+        UUID registro_id
+        VARCHAR accion
+        JSONB datos_anteriores "Estado anterior del registro"
+        JSONB datos_nuevos "Nuevo estado del registro"
+        INET ip_address
+        TEXT user_agent
+        TIMESTAMP fecha_accion
+    }
+
+    %% ===============================================
+    %% RELACIONES
+    %% ===============================================
+
+    %% Configuración Global
+    colegios ||--o{ roles : "tiene roles específicos"
+    colegios ||--o{ anos_academicos : "tiene"
+    colegios ||--o{ niveles_educativos : "tiene"
+    colegios ||--o{ grados : "tiene"
+    colegios ||--o{ grupos : "tiene"
+    colegios ||--o{ materias : "tiene"
+    colegios ||--o{ pensum : "tiene"
+    colegios ||--o{ profesor_colegios : "tiene profesores"
+    colegios ||--o{ matriculas : "tiene estudiantes"
+    colegios ||--o{ periodos_academicos : "tiene"
+    colegios ||--o{ asignaciones : "tiene"
+    colegios ||--o{ tipos_evaluacion : "tiene"
+    colegios ||--o{ calificaciones : "tiene"
+    colegios ||--o{ asistencia : "tiene"
+    colegios ||--o{ conceptos_facturacion : "tiene"
+    colegios ||--o{ facturas : "tiene"
+    colegios ||--o{ notificaciones : "tiene"
+    colegios ||--o{ mensajes : "tiene"
+    colegios ||--o{ logs_auditoria : "tiene"
+
+    %% Usuarios y Roles - MODIFICADO PARA ROLES GLOBALES
+    usuarios ||--o{ usuario_roles : "tiene asignados"
+    roles ||--o{ usuario_roles : "asignado a usuarios"
+    roles }o--o| colegios : "pertenece a (NULL si global)"
+    usuario_roles }o--o| colegios : "contexto (NULL si global)"
+
+    %% Personas
+    tipos_documento ||--o{ personas : "identifica"
+    personas ||--o| profesores : "es"
+    personas ||--o| estudiantes : "es"
+    personas ||--o| acudientes : "es"
+    usuarios ||--o| profesores : "accede como"
+    usuarios ||--o| acudientes : "accede como"
+
+    %% Estructura Académica
+    niveles_educativos ||--o{ grados : "contiene"
+    grados ||--o{ grupos : "contiene"
+    grados ||--o{ pensum : "tiene materias"
+    materias ||--o{ pensum : "se enseña en"
+    anos_academicos ||--o{ grupos : "vigente en"
+    anos_academicos ||--o{ pensum : "vigente en"
+    anos_academicos ||--o{ periodos_academicos : "contiene"
+    anos_academicos ||--o{ matriculas : "vigente en"
+    anos_academicos ||--o{ asignaciones : "vigente en"
+
+    %% Profesores y Estudiantes
+    profesores ||--o{ profesor_colegios : "trabaja en"
+    profesores }o--o| grupos : "dirige grupo"
+    estudiantes ||--o{ matriculas : "matriculado en"
+    grupos ||--o{ matriculas : "contiene"
+    estudiantes ||--o{ estudiante_acudientes : "tiene"
+    acudientes ||--o{ estudiante_acudientes : "cuida"
+
+    %% Evaluaciones y Calificaciones
+    profesores ||--o{ asignaciones : "asignado a"
+    grupos ||--o{ asignaciones : "tiene"
+    materias ||--o{ asignaciones : "se enseña"
+    asignaciones ||--o{ calificaciones : "genera"
+    estudiantes ||--o{ calificaciones : "recibe"
+    periodos_academicos ||--o{ calificaciones : "en período"
+    tipos_evaluacion ||--o{ calificaciones : "tipo"
+    profesores ||--o{ calificaciones : "asigna"
+
+    %% Asistencia
+    estudiantes ||--o{ asistencia : "registro"
+    grupos ||--o{ asistencia : "en grupo"
+    usuarios ||--o{ asistencia : "registra"
+
+    %% Financiero
+    conceptos_facturacion ||--o{ factura_detalles : "facturado"
+    acudientes ||--o{ facturas : "responsable"
+    facturas ||--o{ factura_detalles : "contiene"
+    facturas ||--o{ pagos : "pago de"
+    estudiantes ||--o{ factura_detalles : "detalle por"
+    usuarios ||--o{ pagos : "registra"
+
+    %% Comunicaciones
+    tipos_notificacion ||--o{ notificaciones : "tipo"
+    usuarios ||--o{ notificaciones : "emite"
+    notificaciones ||--o{ notificacion_destinatarios : "enviada a"
+    usuarios ||--o{ notificacion_destinatarios : "recibe"
+    usuarios ||--o{ mensajes : "emisor"
+    usuarios ||--o{ mensajes : "receptor"
+
+    %% Auditoría
+    usuarios ||--o{ logs_auditoria : "ejecuta acción"
