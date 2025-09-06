@@ -11,12 +11,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentacion", "Documentac
 		Documentacion\colegio_configuracion_json.json = Documentacion\colegio_configuracion_json.json
 		Documentacion\configuraciones_adicionales.json = Documentacion\configuraciones_adicionales.json
 		Documentacion\configuracion_financiera_reportes.json = Documentacion\configuracion_financiera_reportes.json
-		Documentacion\diagrama_bd_completo.mermaid = Documentacion\diagrama_bd_completo.mermaid
 		Documentacion\logs_auditoria_datos.json = Documentacion\logs_auditoria_datos.json
-		Documentacion\multicolegio_db.sql = Documentacion\multicolegio_db.sql
 		Documentacion\Requerimiento.docx = Documentacion\Requerimiento.docx
 		Documentacion\roles_permisos.json = Documentacion\roles_permisos.json
-		Documentacion\script_pgadmin_final.sql = Documentacion\script_pgadmin_final.sql
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ColegiosBackend", "ColegiosBackend\ColegiosBackend.csproj", "{7D4C450C-E493-4C02-B259-9D0E5A4F0F28}"
